@@ -54,21 +54,21 @@
 
 /* folder icons */
 .treeBox .folder .item_icon {
-    background: transparent url(media/style/MODxCarbon/images/tree/folder.gif) no-repeat;
+    background: transparent url(../../../manager/media/style/MODxCarbon/images/tree/folder.gif) no-repeat;
 }
 .treeBox .folder .item_icon.open {
-    background: transparent url(media/style/MODxCarbon/images/tree/folderopen.gif) no-repeat;
+    background: transparent url(../../../manager/media/style/MODxCarbon/images/tree/folderopen.gif) no-repeat;
 }
 .treeBox .file .item_icon {
-    background: transparent url(media/style/MODxCarbon/images/tree/page.gif) no-repeat;
+    background: transparent url(../../../manager/media/style/MODxCarbon/images/tree/page.gif) no-repeat;
 }
 
 /* folder status icons */
 .treeBox .folder .folder_status {
-    background: transparent url(media/style/MODxCarbon/images/tree/plusnode.gif) no-repeat;
+    background: transparent url(../../../manager/media/style/MODxCarbon/images/tree/plusnode.gif) no-repeat;
 }
 .treeBox .folder .folder_status.open {
-    background: transparent url(media/style/MODxCarbon/images/tree/minusnode.gif) no-repeat;
+    background: transparent url(../../../manager/media/style/MODxCarbon/images/tree/minusnode.gif) no-repeat;
 }
 .treeBox .last_item .folder_status, .treeBox .last_item .folder_status.open {
     background: transparent;
@@ -76,19 +76,19 @@
 
 /* filetype icons */
 .treeBox .file.filetype-xml .item_icon {
-    background: transparent url(media/style/MODxCarbon/images/tree/application_xml.png) no-repeat;
+    background: transparent url(../../../manager/media/style/MODxCarbon/images/tree/application_xml.png) no-repeat;
 }
 .treeBox .file.filetype-pdf .item_icon {
-    background: transparent url(media/style/MODxCarbon/images/tree/application_pdf.png) no-repeat;
+    background: transparent url(../../../manager/media/style/MODxCarbon/images/tree/application_pdf.png) no-repeat;
 }
 .treeBox .file.filetype-html .item_icon, .treeBox .file.filetype-htm .item_icon {
-    background: transparent url(media/style/MODxCarbon/images/tree/application_html.png) no-repeat;
+    background: transparent url(../../../manager/media/style/MODxCarbon/images/tree/application_html.png) no-repeat;
 }
 .treeBox .file.filetype-js .item_icon {
-    background: transparent url(media/style/MODxCarbon/images/tree/application_js.png) no-repeat;
+    background: transparent url(../../../manager/media/style/MODxCarbon/images/tree/application_js.png) no-repeat;
 }
 .treeBox .file.filetype-css .item_icon {
-    background: transparent url(media/style/MODxCarbon/images/tree/application_css.png) no-repeat;
+    background: transparent url(../../../manager/media/style/MODxCarbon/images/tree/application_css.png) no-repeat;
 }
 
 .treeBox li {

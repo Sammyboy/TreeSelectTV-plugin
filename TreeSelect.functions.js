@@ -109,19 +109,3 @@ var FolderSelect = new Class({
         }
     }
 });
-
-
-window.addEvent('domready', function() {
-    var tvIds       = [[+tvIds+]];
-    var trees       = [[+htmlTrees+]];
-    var inputStatus = [[+inputStatus+]];
-    var filesOnly   = [[+files_only+]];
-
-    for (var i=0; i<tvIds.length; i++) {
-        var inputID = 'tv'+ tvIds[i];
-        if ($(inputID) != null) { 
-            var modxFolderSelect = new FolderSelect(inputID,trees[i],inputStatus[i],filesOnly[i]);
-        }
-    }
-    
-});

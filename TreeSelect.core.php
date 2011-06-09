@@ -65,38 +65,37 @@ foreach ($TSPC as $option) {
 }
 if (!strlen($htmlTrees)) return;
 
-// Read CSS-Styles from file
-$css_file = $pluginPath.'TreeSelect.styles.css';
-$css_styles = file_get_contents($css_file);
-if (!$css_styles) print_r($_ts_error."Could not find, open or read \"$css_file\"!");
-
-// Read JS functions file
-$js_file = $pluginPath.'TreeSelect.functions.js';
-$js_code = file_get_contents($js_file);
-if (!$js_code) print_r($_ts_error."Could not find, open or read \"$js_file\"!");
-
-// Parse placeholders used in JS code
-$ph = array(
-    '[+tvIds+]'         => $tvIds,
-    '[+htmlTrees+]'     => $htmlTrees,
-    '[+inputStatus+]'   => $inputStatus,
-    '[+files_only+]'    => $files_only
-);
-$js_code = str_replace(array_keys($ph), array_values($ph), $js_code);
-
-
 $e = &$modx->Event;
 if ($e->name == 'OnDocFormRender') {
 
     $modx_script = renderFormElement('text',0,'','','');
     preg_match('/(<script[^>]*?>.*?<\/script>)/si', $modx_script, $matches);
     $output = $matches[0];
-
+    $rel_pluginPath = "../".str_replace(MODX_BASE_PATH, '', $pluginPath);
     // Include our JS and CSS code
-    $output .= "<!-- TreeSelect -->
-        <style type=\"text/css\">$css_styles</style>
-        <script type=\"text/javascript\">$js_code</script>
-        <!-- /TreeSelect -->";
+    $output .= <<< OUTPUT
+
+<!-- TreeSelect -->
+<link rel="stylesheet" type="text/css" href="{$rel_pluginPath}TreeSelect.styles.css" />
+<script type="text/javascript" src="{$rel_pluginPath}TreeSelect.functions.js"></script>
+<script type="text/javascript">
+window.addEvent('domready', function() {
+    var tvIds       = [{$tvIds}];
+    var trees       = [{$htmlTrees}];
+    var inputStatus = [{$inputStatus}];
+    var filesOnly   = [{$files_only}];
+
+    for (var i=0; i<tvIds.length; i++) {
+        var inputID = 'tv'+ tvIds[i];
+        if ($(inputID) != null) { 
+            var modxFolderSelect = new FolderSelect(inputID,trees[i],inputStatus[i],filesOnly[i]);
+        }
+    }   
+});
+</script>
+<!-- /TreeSelect -->
+
+OUTPUT;
 
     // ... and render it
     $e->output($output);

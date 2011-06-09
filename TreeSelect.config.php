@@ -100,7 +100,7 @@ $TSPC[$c]['list']['depth']              = false;
 
 $TSPC[$c]['list']['folders']['base']    = "assets/plugins/qm";
 $TSPC[$c]['list']['folders']['filter']  = "^\.+";
-$TSPC[$c]['list']['folders']['accept']  = "(css|js)";
+$TSPC[$c]['list']['folders']['accept']  = ".*";
 $TSPC[$c]['list']['folders']['only']    = false;
 
 $TSPC[$c]['list']['files']['filter']    = "^\.+";
