@@ -1,0 +1,57 @@
+======================================
+TreeSelectTV Plugin für MODx Evolution
+======================================
+
+-------------
+Beschreibung:
+-------------
+
+Dieses Plugin soll Managern und Editoren die tägliche Arbeit erleichtern.
+Es dient dazu, einen Verzeichnisbaum im Backend darzustellen und dessen
+Verzeichnisse und Dateien auswählbar zu machen. Das Ausgewählte Verzeichnis bzw.
+die Datei wird dann in das Textfeld der TV als Pfad übergeben.
+
+Wie aus der Konfigurationsdatei "TreeSelect.config.php" ersichtlich, gibt es
+viele Optionen für die Anpassung. Das Aussehen kann über die CSS-Datei
+"TreeSelect.styles.css" und die Konfigurationsdatei (u.a. auch Dateifilter)
+eingestellt werden.
+
+
+-------------
+Installation:
+-------------
+
+1.  Zip-Archiv lokal entpacken.
+
+2.  Neuen Ordner "assets/plugins/TreeSelect" im MODx-Installationsverzeichnis
+    erstellen und diese Dateien hineinkopieren:
+
+        TreeSelect.class.php
+        TreeSelect.config.php
+        TreeSelect.core.php
+        TreeSelect.functions.js
+        TreeSelect.styles.css
+    
+    
+
+3.  Neues Plugin im Manager-Backend anlegen, den Inhalt der Datei
+
+        plugin.TreeSelect.php
+    
+    reinkopieren, als Plugin-Konfiguration die Zeile
+
+        &pluginPath=Plugin path:;text;assets/plugins/TreeSelect/
+
+    eintragen und als Systemereignis "OnDocFormRender" anhaken.
+
+4.  Eine oder mehrere TVs vom Eingabetyp Text anlegen und mind. einem Template
+    die Berechtigung geben.
+
+5.  Die Datei "TreeSelect.config.php" öffnen und die Konfiguration anpassen.
+
+    Details stehen in den Kommentaren der Beispielkonfiguration.
+    Die wichtigsten Anpassungen sind die IDs der in Punkt 4 angelegten TVs, der
+    Templates und der Verzeichnisse, damit das Plugin überhaupt funktioniert.
+    Die IDs findet man im Manager-Backend als Zahlen in Klammern hinter den
+    jeweiligen TV- und Template-Namen.
+

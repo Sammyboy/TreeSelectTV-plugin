@@ -1,0 +1,59 @@
+======================================
+TreeSelectTV plugin for MODx Evolution
+======================================
+
+-------------
+Description:
+-------------
+
+This plugin can be used to display one or more folder trees in the manager 
+backend of MODx Evolution and make files and/or folders selectable by the user.
+The selected folder or file is then displayed in the input field of a 
+template variable as a path to the file or folder.
+
+As you can seen in the configuration file "TreeSelect.config.php", there are
+many options to for a custom configuration and file filtering.
+The visual styles can be set in the "TreeSelect.styles.css" and the templates 
+in the configuration file.
+
+-------------
+Installation:
+-------------
+
+1.  Unzip the zip-file into a local directiory.
+
+
+2.  Create a new folder "assets/plugins/TreeSelect" in the MODx-installation 
+    directory and copy the following files into it:
+
+        TreeSelect.class.php
+        TreeSelect.config.php
+        TreeSelect.core.php
+        TreeSelect.functions.js
+        TreeSelect.styles.css
+
+
+3.  Create a new plugin in the manager backend of MODx and copy the content of
+
+        plugin.TreeSelect.php
+    
+    into it, as plugin configuration insert the line
+
+        &pluginPath=Plugin path:;text;assets/plugins/TreeSelect/
+
+    and activate the system event "OnDocFormRender".
+
+
+4.  Create one or more template variables of the type Text and make it usable
+    with the template of your site.
+
+5.  Open the file "TreeSelect.config.php" and customize the configuration.
+
+    For configuration datails please read the comments in the example
+    configuration.
+
+    To make the plugin usable, you have to edit the ids of the template 
+    variables (created in step 4), the ids of the templates and the directory 
+    base path in the configuration file. The id numbers of the tvs and
+    templates are displayed in round brackets in the template- and tv-listing
+    of the manager backend right after the names.
