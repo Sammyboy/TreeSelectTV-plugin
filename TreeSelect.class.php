@@ -5,7 +5,7 @@
 //  Class for the
 //  TreeSelectTV for MODx Evolution
 //
-//  @version    0.1.0
+//  @version    0.1.1
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //
@@ -52,6 +52,7 @@ class TreeSelect {
                                         $this->config['folders']['accept'] : "") : 
                                     ((isset($this->config['files']['accept'])   && $this->config['files']['accept'])    ?
                                         $this->config['files']['accept'] : "");
+                // ... and use them
                 if ( $has_size &&
                      (($folders_only === false) || ($folders_only && $is_dir)) &&
                      !in_array($file, array(".","..")) && 
@@ -61,11 +62,25 @@ class TreeSelect {
                 	$key = count($list)-1;
                 	if ($is_dir) {
                     	$list[$key]['type'] = 'folder';
+                    	// Get subfolders
                     	if (($depth === false) || ($depth > 0)) {
                     	    $list[$key]['subfolder'] = $this->getDirList($list[$key]['subfolder'], $folder.$file, ($depth) ? $depth-1 : $depth);
                     	    if (!is_array($list[$key]['subfolder']) || !count($list[$key]['subfolder'])) unset($list[$key]['subfolder']);
                     	}
-                    }  else $list[$key]['type'] = 'file';
+                    }  else {
+                        $list[$key]['type'] = 'file';
+                        // Check if file an image
+                        $is_image = getimagesize($path);
+                        if ($is_image !== false) {
+                            // ... and add it to the array
+                            $list[$key]['img']['src'] = '../'.$folder.$file;
+                            list($list[$key]['img']['width'], $list[$key]['img']['height']) = $is_image;
+                        }
+                        if ($size < 1024) $list[$key]['size'] = $size.' B';
+                        elseif ($size < 1048576) $list[$key]['size'] = round($size / 1024, 2).' kB';
+                        elseif ($size < 1073741824) $list[$key]['size'] = round($size / 1048576, 2).' MB';
+                        elseif ($size < 1099511627776) $list[$key]['size'] = round($size / 1073741824, 2).' GB';
+                    }
                 }
             }
             closedir($handle);
@@ -108,6 +123,10 @@ class TreeSelect {
             // Set placeholders for row output
             $ph =  array();
             $ph['[+tsp.name+]']     = $li['name'];
+            $ph['[+tsp.img_src+]']  = isset($li['img']['src']) ? $li['img']['src'] : "";
+            $ph['[+tsp.img_w+]']    = isset($li['img']['width']) ? $li['img']['width'] : "";
+            $ph['[+tsp.img_h+]']    = isset($li['img']['height']) ? $li['img']['height'] : "";
+            $ph['[+tsp.size+]']     = $li['size'];
             $ph['[+tsp.path+]']     = $new_path;
             $ph['[+tsp.level+]']    = $level;
             $ph['[+tsp.type+]']     = $li['type'];

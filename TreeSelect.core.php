@@ -5,7 +5,7 @@
 //  Core part of the
 //  TreeSelectTV for MODx Evolution
 //
-//  @version    0.1.0
+//  @version    0.1.1
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //
@@ -24,6 +24,8 @@ $tvIds = "";
 $htmlTrees = "";
 $inputStatus = "";
 $files_only = "";
+$image_view = "";
+$hideOnSelect = "";
 
 $cur_tpl  = isset($_POST['template']) ? $_POST['template'] : (isset($content['template']) ? $content['template'] : $default_template);
 $cur_role   = $_SESSION['mgrRole'];
@@ -31,6 +33,7 @@ $cur_role   = $_SESSION['mgrRole'];
 // Set options for each TV
 foreach ($TSPC as $option) {
     $input = $option['input'];
+    $list_opt = array_merge($TSPC_global['list'], $option['list']);
 
     // Check if the current template matches and user has the right role
     $tpl    = (isset($input['tpl_id']) && strlen($input['tpl_id'])) ? explode(',', $input['tpl_id']) : false;
@@ -40,26 +43,26 @@ foreach ($TSPC as $option) {
     // Make list of TV
     $tvIds          .=  (strlen($tvIds) ? "," : "").$input['tv_id'];
     $inputStatus    .=  (strlen($inputStatus) ? "," : "").
-                        (strlen($input['status']) && in_array($input['status'], array("show","edit")) ?
+                        (strlen($input['status']) && in_array($input['status'], array("show","toggle")) ?
                         "'".$input['status']."'" :"''");
     $files_only     .=  (strlen($files_only) ? "," : "").
-                        ((isset($option['list']['files']['only']) && $option['list']['files']['only']) ? "true" : "false");
-
-    // Set templates for output
-    if (!isset($option['list']['tpl_Outer'])) $option['list']['tpl_Outer'] = $TSPC_Templates['list']['tpl_Outer'];
-    if (!isset($option['list']['tpl_Inner'])) $option['list']['tpl_Inner'] = $TSPC_Templates['list']['tpl_Inner'];
+                        ((isset($list_opt['files']['only']) && $list_opt['files']['only']) ? "true" : "false");
+    $image_view     .=  (strlen($image_view) ? "," : "").
+                        ((isset($list_opt['image_view']) && $list_opt['image_view']) ? "true" : "false");
+    $hideOnSelect   .=  (strlen($hideOnSelect) ? "," : "").
+                        ((isset($list_opt['hideOnSelect']) && $list_opt['hideOnSelect']) ? "true" : "false");
 
     //TODO Implement other methods for generating HTML code lists (e.g. image preview or Wayfinder menu)
 
     // Generate directory listing
-    $TreeSelect = new TreeSelect($option['list']);
+    $TreeSelect = new TreeSelect($list_opt);
     
     if ( is_array($TreeSelect->treeList) && count($TreeSelect->treeList) ) {
 
         // ... and put it into HTML code
         $html_tree = $TreeSelect->list2HTML();
         $htmlTrees .= strlen($html_tree) ? (strlen($htmlTrees) ? "," : "")."'".$html_tree."'" : "";
-    }// else return "";// else print_r($_ts_error."Could not build list!");
+    }
     unset($TreeSelect);
 
 }
@@ -72,7 +75,7 @@ if ($e->name == 'OnDocFormRender') {
     preg_match('/(<script[^>]*?>.*?<\/script>)/si', $modx_script, $matches);
     $output = $matches[0];
     $rel_pluginPath = "../".str_replace(MODX_BASE_PATH, '', $pluginPath);
-    // Include our JS and CSS code
+    // Include our JS and CSS file and modify output
     $output .= <<< OUTPUT
 
 <!-- TreeSelect -->
@@ -84,11 +87,13 @@ window.addEvent('domready', function() {
     var trees       = [{$htmlTrees}];
     var inputStatus = [{$inputStatus}];
     var filesOnly   = [{$files_only}];
+    var imageView   = [{$image_view}];
+    var hideOnSelect = [{$hideOnSelect}];
 
     for (var i=0; i<tvIds.length; i++) {
         var inputID = 'tv'+ tvIds[i];
         if ($(inputID) != null) { 
-            var modxFolderSelect = new FolderSelect(inputID,trees[i],inputStatus[i],filesOnly[i]);
+            var modxFolderSelect = new FolderSelect(inputID,trees[i],inputStatus[i],filesOnly[i],imageView[i],hideOnSelect[i]);
         }
     }   
 });

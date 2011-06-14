@@ -2,25 +2,42 @@
 
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 //
-//  Configuration for the
+//  Configuration file for the
 //  TreeSelectTV for MODx Evolution
 //
 //  (TSPC = ̱Tree̱Select ̱Plugin ̱Configuration)
 //
-//  @version    0.1.0
+//  @version    0.1.1
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 
+// All list options can be set either in then global or in the custum section.
 
-// Default templates: You may change them but DON'T DELETE them
-$TSPC_Templates['list']['tpl_Outer']    = '<ul class="item_group level_[+tsp.level+]">[+tsp.wrapper+]</ul>';
-$TSPC_Templates['list']['tpl_Inner']    = '<li class="item_line [+tsp.type+] [+tsp.filetype+] [+tsp.lastItem+]" path="[+tsp.path+]">'.
-                                          '<span class="folder_status toggler"></span><span class="item_icon toggler"></span>'.
-                                          '<span class="item_text selector">[+tsp.name+]</span>'.
-                                          '[+tsp.wrapper+]</li>';
+// GLOBAL SECTION
+
+// Global settings for values that are not defined in the custom section
+$TSPC_global['list']['tpl_Outer']   = '<ul class="item_group level_[+tsp.level+]">[+tsp.wrapper+]</ul>';
+$TSPC_global['list']['tpl_Inner']   = '<li class="item_line [+tsp.type+] [+tsp.filetype+] [+tsp.lastItem+]" '.
+                                      'path="[+tsp.path+]" img="[+tsp.img_src+]">'.
+                                      '<span class="folder_status toggler"></span><span class="item_icon toggler"></span>'.
+                                      '<span class="item_text selector"><span class="filename">[+tsp.name+]</span>'.
+                                      '<span class="filesize">[+tsp.size+]</span></span>'.
+                                      '[+tsp.wrapper+]</li>';
+$TSPC_global['list']['separator']           = "/";
+$TSPC_global['list']['folders']['filter']   = "^\.+";
+$TSPC_global['list']['folders']['accept']   = ".*";
+$TSPC_global['list']['hideOnSelect']        = true;
+$TSPC_global['list']['image_view']          = true;
+$TSPC_global['list']['files']['skip_0b']    = false;
+$TSPC_global['list']['files']['maxsize']    = false;
+$TSPC_global['list']['files']['minsize']    = false;
+
+
+
+// CUSTOM SECTION
 
 // Custom configuration
 /*
@@ -30,10 +47,10 @@ $TSPC_Templates['list']['tpl_Inner']    = '<li class="item_line [+tsp.type+] [+t
 //==============================================================================
 $c = count($TSPC);
 
-$TSPC[$c]['input']['tv_id']            = 29;       // ID of template variable to be used with
+$TSPC[$c]['input']['tv_id']            = 29;       // ID of template variable to be used with the CSS ID is then treeBox_tv29
 $TSPC[$c]['input']['tpl_id']           = "5";        // ID of template used
 $TSPC[$c]['input']['role']             = false;    // 1 = Administrator, 2 = Editor, 3 = Publisher
-$TSPC[$c]['input']['status']           = "show";   // Status how to display input field. Options: "show", "edit" or ""
+$TSPC[$c]['input']['status']           = "show";   // Status how to display input field. Options: "show", "toggle" or ""
 
 
 $TSPC[$c]['list']['separator']         = "/";      // List item separator string for output string (displayed in the input field)
@@ -66,24 +83,24 @@ $c = count($TSPC);
 $TSPC[$c]['input']['tv_id']             = 29;
 $TSPC[$c]['input']['tpl_id']            = "5";
 $TSPC[$c]['input']['role']              = false;
-$TSPC[$c]['input']['status']            = "";
+$TSPC[$c]['input']['status']            = "show";
 
-$TSPC[$c]['list']['separator']          = "/";
+//$TSPC[$c]['list']['separator']          = "/";
 $TSPC[$c]['list']['depth']              = false;
 
 $TSPC[$c]['list']['folders']['base']    = "assets/modules/evogallery";
-$TSPC[$c]['list']['folders']['filter']  = "^\.+";
-$TSPC[$c]['list']['folders']['accept']  = ".*";
+//$TSPC[$c]['list']['folders']['filter']  = "^\.+";
+//$TSPC[$c]['list']['folders']['accept']  = ".*";
 $TSPC[$c]['list']['folders']['only']    = true;
 
 $TSPC[$c]['list']['files']['filter']    = "^\.+";
 $TSPC[$c]['list']['files']['accept']    = ".*";
-$TSPC[$c]['list']['files']['skip_0b']   = false;
-$TSPC[$c]['list']['files']['maxsize']   = false;
-$TSPC[$c]['list']['files']['minsize']   = false;
+//$TSPC[$c]['list']['files']['skip_0b']   = false;
+//$TSPC[$c]['list']['files']['maxsize']   = false;
+//$TSPC[$c]['list']['files']['minsize']   = false;
 
-$TSPC[$c]['list']['tpl_Outer']          = null;
-$TSPC[$c]['list']['tpl_Inner']          = null;
+//$TSPC[$c]['list']['tpl_Outer']          = null;
+//$TSPC[$c]['list']['tpl_Inner']          = null;
 
 //==============================================================================
 // anotherTreeTV
@@ -93,21 +110,22 @@ $c = count($TSPC);
 $TSPC[$c]['input']['tv_id']             = 30;
 $TSPC[$c]['input']['tpl_id']            = "5";
 $TSPC[$c]['input']['role']              = false;
-$TSPC[$c]['input']['status']            = "show";
+$TSPC[$c]['input']['status']            = "toggle";
 
-$TSPC[$c]['list']['separator']          = "/";
+//$TSPC[$c]['list']['separator']          = "/";
 $TSPC[$c]['list']['depth']              = false;
+$TSPC[$c]['list']['hideOnSelect']       = true;
 
-$TSPC[$c]['list']['folders']['base']    = "assets/plugins/qm";
-$TSPC[$c]['list']['folders']['filter']  = "^\.+";
-$TSPC[$c]['list']['folders']['accept']  = ".*";
+$TSPC[$c]['list']['folders']['base']    = "assets/images";
+//$TSPC[$c]['list']['folders']['filter']  = "^\.+";
+//$TSPC[$c]['list']['folders']['accept']  = ".*";
 $TSPC[$c]['list']['folders']['only']    = false;
 
 $TSPC[$c]['list']['files']['filter']    = "^\.+";
 $TSPC[$c]['list']['files']['accept']    = "\.(.+)$";
-$TSPC[$c]['list']['files']['skip_0b']   = false;
-$TSPC[$c]['list']['files']['maxsize']   = false;
-$TSPC[$c]['list']['files']['minsize']   = false;
+//$TSPC[$c]['list']['files']['skip_0b']   = false;
+//$TSPC[$c]['list']['files']['maxsize']   = false;
+//$TSPC[$c]['list']['files']['minsize']   = false;
 $TSPC[$c]['list']['files']['only']      = true;
 
 //$TSPC[$c]['list']['tpl_Outer']          = $TSPC_Templates['list']['tpl_Outer'];
