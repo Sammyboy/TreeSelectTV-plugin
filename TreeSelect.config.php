@@ -47,27 +47,29 @@ $TSPC_global['list']['files']['minsize']    = false;
 //==============================================================================
 $c = count($TSPC);
 
-$TSPC[$c]['input']['tv_id']            = 29;       // ID of template variable to be used with the CSS ID is then treeBox_tv29
-$TSPC[$c]['input']['tpl_id']           = "5";        // ID of template used
-$TSPC[$c]['input']['role']             = false;    // 1 = Administrator, 2 = Editor, 3 = Publisher
-$TSPC[$c]['input']['status']           = "show";   // Status how to display input field. Options: "show", "toggle" or ""
+$TSPC[$c]['input']['tv_id']            = 29;        // ID of template variable to be used with the CSS ID is then treeBox_tv29
+$TSPC[$c]['input']['tpl_id']           = "5";       // ID of template used
+$TSPC[$c]['input']['role']             = false;     // 1 = Administrator, 2 = Editor, 3 = Publisher
+$TSPC[$c]['input']['status']           = "show";    // Status how to display input field. Options: "show", "toggle" or ""
 
 
-$TSPC[$c]['list']['separator']         = "/";      // List item separator string for output string (displayed in the input field)
-$TSPC[$c]['list']['depth']             = false;    // Depth of level of subfolders; Set false for all levels
+$TSPC[$c]['list']['separator']         = "/";       // List item separator string for output string (displayed in the input field)
+$TSPC[$c]['list']['depth']             = false;     // Depth of level of subfolders; Set false for all levels
+$TSPC[$c]['list']['hideOnSelect']      = false;     // hides list on clicking item (only if input status is "toggle")
+$TSPC[$c]['list']['image_view']        = true;      // Preview for image files
 
 $TSPC[$c]['list']['folders']['base']   = "assets/images"; // Folder to be listed
-$TSPC[$c]['list']['folders']['filter'] = "^\.+";   // Regular expression of filter string for folders NOT to be listed
-$TSPC[$c]['list']['folders']['accept'] = ".*";     // Regular expression of filter string for folders to ACCEPT ONLY
-$TSPC[$c]['list']['folders']['only']   = true;     // Set true to display folders only
+$TSPC[$c]['list']['folders']['filter'] = "^\.+";    // Regular expression of filter string for folders NOT to be listed
+$TSPC[$c]['list']['folders']['accept'] = ".*";      // Regular expression of filter string for folders to ACCEPT ONLY
+$TSPC[$c]['list']['folders']['only']   = true;      // Set true to display folders only
 
-$TSPC[$c]['list']['files']['filter']   = "^\.+";   // Regular expression of filter string for files NOT to be listed
-$TSPC[$c]['list']['files']['accept']   = ".*";     // Regular expression of filter string for files to be listed ONLY e.g. "\.(jpg|png|gif)$";
-$TSPC[$c]['list']['files']['skip_0b']  = false;    // Set true to skip files if its size is 0 byte
-$TSPC[$c]['list']['files']['maxsize']  = false;    // Maximum size of files to be listed 
-$TSPC[$c]['list']['files']['minsize']  = false;    // Minimum size of files to be listed
-$TSPC[$c]['list']['files']['only']     = false;    // If this is set true, only folders that contain files are shown in the tree
-                                                   // and (if "folders only" option is not set) only files are set as result
+$TSPC[$c]['list']['files']['filter']   = "^\.+";    // Regular expression of filter string for files NOT to be listed
+$TSPC[$c]['list']['files']['accept']   = ".*";      // Regular expression of filter string for files to be listed ONLY e.g. "\.(jpg|png|gif)$";
+$TSPC[$c]['list']['files']['skip_0b']  = false;     // Set true to skip files if its size is 0 byte
+$TSPC[$c]['list']['files']['maxsize']  = false;     // Maximum size of files to be listed 
+$TSPC[$c]['list']['files']['minsize']  = false;     // Minimum size of files to be listed
+$TSPC[$c]['list']['files']['only']     = false;     // If this is set true, only folders that contain files are shown in the tree
+                                                    // and (if "folders only" option is not set) only files are set as result
 
 $TSPC[$c]['list']['tpl_Outer']         = '<ul class="item_group level_[+tsp.level+]">[+tsp.wrapper+]</ul>';    // HTML-Template for list
 $TSPC[$c]['list']['tpl_Inner']         = '<li class="item_line [+tsp.type+] [+tsp.filetype+] [+tsp.lastItem+]" path="[+tsp.path+]"></span>'.
