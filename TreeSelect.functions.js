@@ -2,7 +2,7 @@
 
 var FolderSelect = new Class({
     initialize: function(inputID,tree,inputStatus,filesOnly,imageView,hideOnSelect) {
-        // Get parameters
+        // get parameters
         this.name = inputID;
         this.input = $(inputID);
         this.filesOnly = filesOnly;
@@ -10,36 +10,37 @@ var FolderSelect = new Class({
         this.imageView = imageView;
         this.hideOnSelect = hideOnSelect;
 
-        // Hide main input field
+        // hide main input field
         this.input.setStyle('display','none');
 
         if (this.inputStatus != "") {
-            // Set new result field
+            // set new result field
             this.display = new Element('span', { 'id':'treeBoxOutput_'+this.name, 'class':'treeBox_output '+this.inputStatus });
             this.display.innerHTML = this.input.value;
                                                   
         }
-        // Create new elemnts
+        // create new elemnts
         this.box = new Element('div',{'id':'treeBox_'+this.name,'class':'treeBox'});
         if (this.imageView) this.image = new Element('div',{'id':'treeBoxImage_'+this.name,'class':'treeBox_image'});
-        // Put HTML code
+        // put HTML code
         this.box.innerHTML = tree;
         
-        // Put input value to the tree
+        // put input value to the tree
         this.selectors = this.box.getElements('.selector');
+        this.togglers = this.box.getElements('.toggler');
         for (var i=0; i < this.selectors.length; i++) {
             var selector_line = this.selectors[i];
             while (!selector_line.hasClass('item_line')) selector_line = this.selectors[i].getParent();
             if (selector_line.getProperty('path') == this.input.value) {
                 selector_line.addClass('new_select');
-                // Close selected branch ...
+                // close selected node ...
                 selector_line.addClass('close');
             }
         }
         // ... and open it again
-        this.checkBranch();
+        this.checkList();
         
-        // Set event behavior for the button
+        // set event behavior for the button
         if (inputStatus == "toggle") {
             this.box.addClass('hide');
             this.display.set({
@@ -50,7 +51,7 @@ var FolderSelect = new Class({
                 }                
             });
         }
-        // Set event behavior for items
+        // set event behavior for items
         this.selectors.set({
 		    'events': {
                 mouseover: function() { this.addClass('hover'); },
@@ -62,73 +63,108 @@ var FolderSelect = new Class({
                 }
             }
 		});
-		// Set event bahavior for the box
+		// set event behavior for togglers
+		this.togglers.set({
+		    'events': {
+                mouseover: function() { this.addClass('hover'); },
+                mouseleave: function() { this.removeClass('hover'); },
+                click: function() {
+                    var selector_line = this;
+                    while (!selector_line.hasClass('item_line')) selector_line = this.getParent();
+                    if (!selector_line.hasClass('new_toggle')) selector_line.addClass('new_toggle');
+                }
+            }
+		});
+		// set event bahavior for the box
         this.box.set({
             'events': {
                 click: function() {
                     var new_select = this.box.getElements('.new_select');
-                    if (new_select.length) { this.checkBranch(); }
+                    if (new_select.length) { this.checkList(); }
+                    var new_toggle = this.box.getElements('.new_toggle');
+                    if (new_toggle.length) { this.toggleNode(); }
                 }.bind(this)
             }
         });
-
-        // Add the new elements to the table cell
+        
+        // add the new elements to the table cell
         if (this.imageView) this.input.getParent().adopt(this.image);
         if (this.inputStatus != "") this.input.getParent().adopt(this.display);
         this.input.getParent().adopt(this.box);
     },
 
-    checkBranch: function() {
+    checkList: function() {
         var new_select = this.box.getElements('.new_select');
         if (new_select.length) {
-            this_line = new_select[0];
-            this_line.removeClass('new_select');
+            this.line = new_select[0];
+            this.line.removeClass('new_select');
 
-            // Set value to input field
-            if (this_line.hasClass('file') || (this_line.hasClass('folder') && (this.filesOnly == false))) {
-                this.input.value = this_line.getProperty('path');
-                if (this.inputStatus !== "") this.display.innerHTML = this_line.getProperty('path');
+            // set value to input field
+            if (this.line.hasClass('file') || (this.line.hasClass('folder') && (this.filesOnly == false))) {
+                this.input.value = this.line.getProperty('path');
+                if (this.inputStatus !== "") this.display.innerHTML = this.line.getProperty('path');
                 if ((this.inputStatus == "toggle") && this.hideOnSelect) this.box.toggleClass('hide');
             }
             if (this.imageView) {
-                // Show image preview
-                var img = this_line.getProperty('img');
+                // show image preview
+                var img = this.line.getProperty('img');
                 if (img.length) this.image.innerHTML = '<img src="'+img+'">';
-                else if (this_line.hasClass('file') || (this.filesOnly == false)) this.image.innerHTML = '';
+                else if (this.line.hasClass('file') || (this.filesOnly == false)) this.image.innerHTML = '';
             }
 
-            // Hide branch if already selected or marked to be closed
-            if (this_line.hasClass('open') && (!this_line.hasClass('selected') || this_line.hasClass('close')))
-                this_line.removeClass('open');
+            // hide all other groups
+            this.checkHideGroups();            
 
-            // Select item
-            this.box.getElements('.selected').removeClass('selected');
-            this_line.addClass('selected');
-
-            // Hide all other branches
-            this.checkHideGroups();
-            
-            // Show all parents
-            var parent = this_line;
+            // show all parents
+            var parent = this.line;
             while (!parent.hasClass('level_1')) {
                 if (parent.hasClass('hide')) parent.removeClass('hide');
+                if (parent.hasClass('item_line') && !parent.hasClass('open')) parent.addClass('open');
                 parent = parent.getParent();
             }
+            
+            // hide branch if already selected or marked to be closed
+            if (this.line.hasClass('open') && (!this.line.hasClass('selected') || this.line.hasClass('close')))
+                this.line.removeClass('open');
+            else this.line.toggleClass('open');
 
-            // Show children
-            if (!this_line.hasClass('last_item')) {
-                if (!this_line.hasClass('close')) this_line.toggleClass('open');
-                var child_group = this_line.getElements('.item_group');
-                if (this_line.hasClass('open') && child_group[0].hasClass('hide')) {
-                    child_group[0].removeClass('hide');
-                } else if (!this_line.hasClass('open') && !child_group[0].hasClass('hide')) {
-                    child_group[0].addClass('hide');
-                }
-            }
+            // select item
+            this.box.getElements('.selected').removeClass('selected');
+            this.line.addClass('selected');
+
+
+                        
+            this.toggleSubNodes();
             this.box.getElements('.close').removeClass('close');
             this.checkTogglers();
             
         } else this.checkHideGroups();
+    },
+    toggleNode: function() {
+        // show or hide nodes
+        var new_toggle = this.box.getElements('.new_toggle');
+        
+        if (new_toggle.length) {
+            this.line = new_toggle[0];
+            new_toggle.removeClass('new_toggle');
+            if (this.line.hasClass('close')) this.line.removeClass('close');
+
+            this.toggleSubNodes();
+            this.checkTogglers();
+            
+        }
+    },
+    toggleSubNodes: function() {
+        // show or hide subnodes
+        if (!this.line.hasClass('last_item')) {
+            if (!this.line.hasClass('close')) this.line.toggleClass('open');
+            var child_group = this.line.getElements('.item_group');
+            if (this.line.hasClass('open') && child_group[0].hasClass('hide')) {
+                child_group[0].removeClass('hide');
+            } else if (!this.line.hasClass('open') && !child_group[0].hasClass('hide')) {
+                child_group[0].addClass('hide');
+            }
+        }
     },
     checkHideGroups: function() {
         var item_groups = this.box.getElements('.item_group');
@@ -137,17 +173,18 @@ var FolderSelect = new Class({
         }
     },
     checkTogglers: function() {
-        // Set togglers to actual state
-        var toggler = this.box.getElements('.toggler');
-        for (var i=0; i < toggler.length; i++) {
-            parent = toggler[i];
-            while (!parent.hasClass('item_line')) parent = parent.getParent();
-            var child_group = parent.getElements('.item_group');
-            if (child_group.length) {
-                if (child_group[0].hasClass('hide')) {
-                    if (toggler[i].hasClass('open')) toggler[i].removeClass('open');
-                } else {
-                    if (!toggler[i].hasClass('open')) toggler[i].addClass('open');
+        // adjust togglers
+        if (this.togglers.length) {
+            for (var i=0; i < this.togglers.length; i++) {
+                parent = this.togglers[i];
+                while (!parent.hasClass('item_line')) parent = parent.getParent();
+                var child_group = parent.getElements('.item_group');
+                if (child_group.length) {
+                    if (child_group[0].hasClass('hide')) {
+                        if (this.togglers[i].hasClass('open')) this.togglers[i].removeClass('open');
+                    } else {
+                        if (!this.togglers[i].hasClass('open')) this.togglers[i].addClass('open');
+                    }
                 }
             }
         }
