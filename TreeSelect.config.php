@@ -90,7 +90,7 @@ $TSPC[$c]['input']['status']            = "";
 //$TSPC[$c]['list']['separator']          = "/";
 $TSPC[$c]['list']['depth']              = false;
 
-$TSPC[$c]['list']['folders']['base']    = "assets/modules/evogallery";
+$TSPC[$c]['list']['folders']['base']    = "assets/files";
 //$TSPC[$c]['list']['folders']['filter']  = "^\.+";
 //$TSPC[$c]['list']['folders']['accept']  = ".*";
 $TSPC[$c]['list']['folders']['only']    = true;
