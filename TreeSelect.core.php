@@ -11,7 +11,7 @@
 //
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-global $content,$default_template,$tmplvars;
+global $content,$default_template;
 
 // Include other parts of the package:
 // Configuration
@@ -20,12 +20,7 @@ include $pluginPath."TreeSelect.config.php";
 include $pluginPath."TreeSelect.class.php";
 
 // Initialize things
-$tvIds = "";
-$htmlTrees = "";
-$inputStatus = "";
-$files_only = "";
-$image_view = "";
-$hideOnSelect = "";
+$tvIds = $htmlTrees = $inputStatus = $files_only = $image_view = $hideOnSelect = "";
 
 $cur_tpl  = isset($_POST['template']) ? $_POST['template'] : (isset($content['template']) ? $content['template'] : $default_template);
 $cur_role   = $_SESSION['mgrRole'];
@@ -83,17 +78,17 @@ if ($e->name == 'OnDocFormRender') {
 <script type="text/javascript" src="{$rel_pluginPath}TreeSelect.functions.js"></script>
 <script type="text/javascript">
 window.addEvent('domready', function() {
-    var tvIds       = [{$tvIds}];
-    var trees       = [{$htmlTrees}];
-    var inputStatus = [{$inputStatus}];
-    var filesOnly   = [{$files_only}];
-    var imageView   = [{$image_view}];
-    var hideOnSelect = [{$hideOnSelect}];
+    var tvIds           = [{$tvIds}];
+    var trees           = [{$htmlTrees}];
+    var inputStatus     = [{$inputStatus}];
+    var filesOnly       = [{$files_only}];
+    var imageView       = [{$image_view}];
+    var hideOnSelect    = [{$hideOnSelect}];
 
     for (var i=0; i<tvIds.length; i++) {
         var inputID = 'tv'+ tvIds[i];
         if ($(inputID) != null) { 
-            var modxFolderSelect = new FolderSelect(inputID,trees[i],inputStatus[i],filesOnly[i],imageView[i],hideOnSelect[i]);
+            new FolderSelect(inputID,trees[i],inputStatus[i],filesOnly[i],imageView[i],hideOnSelect[i]);
         }
     }   
 });

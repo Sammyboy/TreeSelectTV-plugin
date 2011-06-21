@@ -112,10 +112,10 @@ $c = count($TSPC);
 $TSPC[$c]['input']['tv_id']             = 30;
 $TSPC[$c]['input']['tpl_id']            = "5";
 $TSPC[$c]['input']['role']              = false;
-$TSPC[$c]['input']['status']            = "show";
+$TSPC[$c]['input']['status']            = "toggle";
 
 //$TSPC[$c]['list']['separator']          = "/";
-$TSPC[$c]['list']['depth']              = false;
+$TSPC[$c]['list']['depth']              = 1;
 $TSPC[$c]['list']['hideOnSelect']       = true;
 
 $TSPC[$c]['list']['folders']['base']    = "assets/images";
@@ -124,7 +124,7 @@ $TSPC[$c]['list']['folders']['base']    = "assets/images";
 $TSPC[$c]['list']['folders']['only']    = false;
 
 $TSPC[$c]['list']['files']['filter']    = "^\.+";
-$TSPC[$c]['list']['files']['accept']    = "\.(png|jpg)$";
+$TSPC[$c]['list']['files']['accept']    = "\.(jpg|png)$";
 //$TSPC[$c]['list']['files']['skip_0b']   = false;
 //$TSPC[$c]['list']['files']['maxsize']   = false;
 //$TSPC[$c]['list']['files']['minsize']   = false;

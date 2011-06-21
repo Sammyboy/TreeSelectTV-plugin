@@ -131,8 +131,6 @@ var FolderSelect = new Class({
             // select item
             this.box.getElements('.selected').removeClass('selected');
             this.line.addClass('selected');
-
-
                         
             this.toggleSubNodes();
             this.box.getElements('.close').removeClass('close');
