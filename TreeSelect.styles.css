@@ -5,6 +5,14 @@
     overflow: auto;
     border: 1px solid #ddd;*/
 }
+.treeBox ul {
+    margin-left: 8px;
+    padding-left: 0;
+}
+
+.treeBox ul ul {
+    border-left: 4px solid #eee;
+}
 
 .treeBox_output {
     padding: 2px 6px;
@@ -17,7 +25,7 @@
 }
 
 .treeBox_output.toggle.hover {
-    background: #ffc;
+    background: #d5ffb7;
 }
 
 .hover {
@@ -62,18 +70,18 @@
     cursor: hand;*/
 }
 .treeBox .item_text.hover, .treeBox .open .item_text.hover {
-    background: #ffc;
+    background: #d5ffb7;
     border: 1px solid #ccc;
 }
 .treeBox .selected .item_text {
     background: #eee;
     border: 1px solid #bbb;
 }
-#treeBox_tv30.treeBox .file .filename {
+.treeBox .file .filename {
     display: inline-block;
     min-width: 280px;
 }
-#treeBox_tv30.treeBox .file .filesize {
+.treeBox .file .filesize {
     display: inline-block;
     text-align: right;
     min-width: 70px;

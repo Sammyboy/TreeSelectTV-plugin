@@ -1,59 +1,122 @@
-======================================
-TreeSelectTV plugin for MODx Evolution
-======================================
+================================================================================
+TreeSelectTV plugin 0.1.2
+================================================================================
+for the MODX Evolution content management framework
 
--------------
+================================================================================
 Description:
--------------
+================================================================================
 
 This plugin can be used to display one or more folder trees in the manager 
-backend of MODx Evolution and make files and/or folders selectable by the user.
+backend of MODX Evolution and make files and/or folders selectable by the user.
 The selected folder or file is then displayed in the input field of a 
-template variable as a path to the file or folder.
+template variable (TV) as a path to the file or folder.
 
-As you can seen in the configuration file "TreeSelect.config.php", there are
-many options to for a custom configuration and file filtering.
+As you can see in the configuration file "configs/default_config.inc.php",
+there are many options for a custom configuration and file filtering.
 The visual styles can be set in the "TreeSelect.styles.css" and the templates 
-in the configuration file.
+in the configuration file(s).
 
--------------
+
+================================================================================
 Installation:
--------------
+================================================================================
 
-1.  Unzip the zip-file into a local directiory.
+1.  Download the archive file and unzip/untar it into a local directiory.
 
 
 2.  Create a new folder "assets/plugins/TreeSelect" in the MODx-installation 
     directory and copy the following files into it:
 
         TreeSelect.class.php
-        TreeSelect.config.php
         TreeSelect.core.php
         TreeSelect.functions.js
         TreeSelect.styles.css
+        configs/default_config.inc.php
+
+    (Alternatively you can use a custom name for the new plugin folder and put
+    it in the "pluginPath" field of the plugin configuration.)
 
 
-3.  Create a new plugin in the manager backend of MODx and copy the content of
+3.  Set up the plugin:
 
-        plugin.TreeSelect.php
+    Create a new plugin in the manager backend of MODx:
     
-    into it, as plugin configuration insert the line
+    a.  In the "General" tab
+        use these values
 
-        &pluginPath=Plugin path:;text;assets/plugins/TreeSelect/
+            "Plugin name":  TreeSelect
+            "Description":  <strong>0.1.2</strong> TreeSelectTV plugin 
+            
+        Open the file
 
-    and activate the system event "OnDocFormRender".
+            plugin.TreeSelect.php
+
+        in a texteditor and copy the content of this file as the "Plugin code"
+        into the new plugin.
+
+    b.  In the "Configuration" tab
+        insert the following line as "Plugin configuration":
+
+            &pluginPath=Plugin path;string;assets/plugins/TreeSelect/ &tvids=TV IDs;string; &tplids=Template IDs;string; &roles=Roles;string; &input_status=Inputfield status;list;hide,show,toggle;hide &list_separator=Separator;string;/ &list_depth=Tree depth;int;-1 &list_hideOnSelect=Hide on select;list;yes,no;no &list_image_view=Image preview;list;yes,no;yes &list_folders_base=Base folder;string; &list_folders_start=Start folder;string; &list_folders_filter=Folders to ignore (reg. expr.);string;^\.+ &list_folders_accept=Folders to accept (reg. expr.);string;.* &list_folders_only=Folders only;list;yes,no;no &list_files_filter=Files to ignore;string;^\.+ &list_files_accept=Files to accept;string;.* &list_files_skip_0b=Skip empty files;list;yes,no;no &list_files_maxsize=Max. filesize;int;-1 &list_files_minsize=Min. filesize;int;-1 &list_files_only=Files only;list;yes,no;no
+
+    c.  In the "System Events" tab
+        Activate "OnDocFormRender".
 
 
 4.  Create one or more template variables of the type Text and make it usable
-    with the template of your site.
+    with the template(s) of your site.
 
-5.  Open the file "TreeSelect.config.php" and customize the configuration.
 
-    For configuration datails please read the comments in the example
-    configuration.
+================================================================================
+Configuration
+================================================================================
 
-    To make the plugin usable, you have to edit the ids of the template 
-    variables (created in step 4), the ids of the templates and the directory 
-    base path in the configuration file. The id numbers of the tvs and
-    templates are displayed in round brackets in the template- and tv-listing
-    of the manager backend right after the names.
+A.  For
+      · the default settings or
+      · the use of only one TV with this plugin or
+      · more than one TV but with the same tree for all used TVs (comma 
+        separated list of ids),
+
+    use the "Plugin configuration" in the manager backend to adjust the
+    values.
+    
+    The settings are documented in the "configs/default_config.inc.php".
+
+B.  For at least two TVs with different trees, follow these instructions to
+    create a custom configuration file:
+
+      · Make a copy of the file "default_config.inc.php" inside the
+        "configs/" folder.
+      · Rename it to "*.config.inc.php" (where * should be replaced by a
+        name of your choice, e.g. "tv23.config.inc.php").
+      · Edit the file and set the correct values in there.
+      · Make sure it is placed it in the folder "configs/".
+    
+    Inside the new file you may delete the lines (and comments) you don't
+    need, except of the first and the last line.
+
+To make the plugin usable, at least you have to adjust the ids of the
+template variables (created in step 4) in the plugin's configuration
+backend or/and the custom configuration file(s).
+
+The id numbers of the TVs and templates are displayed in round brackets in
+the template- and tv-listing of the manager backend right after the names.
+
+
+Example file structure for the plugin folder:
+
+MODX-base-path/
+    assets/
+        plugins/
+            TreeSelect/
+                TreeSelect.class.php
+                TreeSelect.core.php
+                TreeSelect.functions.js
+                TreeSelect.styles.css
+                configs/
+                    default_config.inc.php
+                    tv23.config.inc.php
+                    treetv.config.inc.php
+                    anothertree.config.inc.php
+

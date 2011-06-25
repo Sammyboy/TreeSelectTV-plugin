@@ -5,7 +5,7 @@
 //  Core part of the
 //  TreeSelectTV for MODx Evolution
 //
-//  @version    0.1.1
+//  @version    0.1.2
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //
@@ -14,32 +14,73 @@
 global $content,$default_template;
 
 // Include other parts of the package:
-// Configuration
-include $pluginPath."TreeSelect.config.php";
 // Class
 include $pluginPath."TreeSelect.class.php";
+// Config files
+$settings = $options = array();
+include $pluginPath."configs/default_config.inc.php";
+
+$settings['input']['tvids']     = $tvids; 
+$settings['input']['tplids']    = $tplids;
+$settings['input']['roles']     = $roles;
+$settings['input']['status']    = $input_status == "hide" ? "" : $input_status;
+
+$settings['list']['separator']          = $list_separator;
+$settings['list']['depth']              = $list_depth == -1 ? false : $list_depth;
+$settings['list']['hideOnSelect']       = $list_hideOnSelect == "yes" ? true : false;
+
+$settings['list']['image_view']         = $list_image_view == "yes" ? true : false;
+
+$settings['list']['folders']['base']    = $list_folders_base;
+$settings['list']['folders']['start']   = $list_folders_start;
+$settings['list']['folders']['filter']  = $list_folders_filter;
+$settings['list']['folders']['accept']  = $list_folders_accept;
+$settings['list']['folders']['only']    = $list_folders_only == "yes" ? true : false;
+
+$settings['list']['files']['filter']    = $list_files_filter;
+$settings['list']['files']['accept']    = $list_files_accept;
+
+$settings['list']['files']['skip_0b']   = $list_files_skip_0b == "yes" ? true : false;
+$settings['list']['files']['maxsize']   = $list_files_maxsize == -1 ? false : $list_files_maxsize;
+$settings['list']['files']['minsize']   = $list_files_minsize == -1 ? false : $list_files_minsize;
+$settings['list']['files']['only']      = $list_files_only == "yes" ? true : false;
+
+$default_settings = $settings;
+
+$configFiles = glob($pluginPath.'configs/*.config.inc.php');
+if (count($configFiles)) {
+    foreach ($configFiles as $configFile) {
+        $settings = $default_settings;
+        include $configFile;
+        if (isset($settings['input']['tvids']) && strlen($settings['input']['tvids']))
+            $options[] = $settings;
+        unset($settings);
+    }
+} elseif (!isset($default_settings['input']['tvids']) || !strlen($default_settings['input']['tvids'])) return;
+else $options[] = $default_settings;
 
 // Initialize things
 $tvIds = $htmlTrees = $inputStatus = $files_only = $image_view = $hideOnSelect = "";
 
-$cur_tpl  = isset($_POST['template']) ? $_POST['template'] : (isset($content['template']) ? $content['template'] : $default_template);
+$cur_tpl    = isset($_POST['template']) ? $_POST['template'] : (isset($content['template']) ? $content['template'] : $default_template);
 $cur_role   = $_SESSION['mgrRole'];
 
 // Set options for each TV
-foreach ($TSPC as $option) {
-    $input = $option['input'];
-    $list_opt = array_merge($TSPC_global['list'], $option['list']);
-
+foreach ($options as $option) {
+    $input_opt = $option['input'];
+    $list_opt = $option['list'];
+    
     // Check if the current template matches and user has the right role
-    $tpl    = (isset($input['tpl_id']) && strlen($input['tpl_id'])) ? explode(',', $input['tpl_id']) : false;
-    $role   = (isset($input['role']) && strlen($input['role'])) ? explode(',', $input['role']) : false;
+    $tpl    = ($input_opt['tplids']) ? explode(',', $input_opt['tplids']) : false;
+    $role   = ($input_opt['roles']) ? explode(',', $input_opt['roles']) : false;
     if (($tpl && !in_array($cur_tpl, $tpl)) || ($role && !in_array($cur_role, $role))) continue;
+    
+    if ($list_opt['folders']['base'] == "") $list_opt['folders']['base'] = MODX_BASE_PATH;
 
-    // Make list of TV
-    $tvIds          .=  (strlen($tvIds) ? "," : "").$input['tv_id'];
+    $tvIds          .=  (strlen($tvIds) ? "," : "")."[".trim($input_opt['tvids'])."]";
     $inputStatus    .=  (strlen($inputStatus) ? "," : "").
-                        (strlen($input['status']) && in_array($input['status'], array("show","toggle")) ?
-                        "'".$input['status']."'" :"''");
+                        (strlen($input_opt['status']) && in_array($input_opt['status'], array("show","toggle")) ?
+                        "'".trim($input_opt['status'])."'" :"''");
     $files_only     .=  (strlen($files_only) ? "," : "").
                         ((isset($list_opt['files']['only']) && $list_opt['files']['only']) ? "true" : "false");
     $image_view     .=  (strlen($image_view) ? "," : "").
@@ -47,7 +88,7 @@ foreach ($TSPC as $option) {
     $hideOnSelect   .=  (strlen($hideOnSelect) ? "," : "").
                         ((isset($list_opt['hideOnSelect']) && $list_opt['hideOnSelect']) ? "true" : "false");
 
-    //TODO Implement other methods for generating HTML code lists (e.g. image preview or Wayfinder menu)
+    //TODO Implement other methods for generating different HTML coded lists (e.g. image preview or Wayfinder menu)
 
     // Generate directory listing
     $TreeSelect = new TreeSelect($list_opt);
@@ -59,7 +100,6 @@ foreach ($TSPC as $option) {
         $htmlTrees .= strlen($html_tree) ? (strlen($htmlTrees) ? "," : "")."'".$html_tree."'" : "";
     }
     unset($TreeSelect);
-
 }
 if (!strlen($htmlTrees)) return;
 
@@ -78,17 +118,19 @@ if ($e->name == 'OnDocFormRender') {
 <script type="text/javascript" src="{$rel_pluginPath}TreeSelect.functions.js"></script>
 <script type="text/javascript">
 window.addEvent('domready', function() {
-    var tvIds           = [{$tvIds}];
-    var trees           = [{$htmlTrees}];
-    var inputStatus     = [{$inputStatus}];
-    var filesOnly       = [{$files_only}];
-    var imageView       = [{$image_view}];
-    var hideOnSelect    = [{$hideOnSelect}];
+    var tvIds           = new Array({$tvIds});
+    var trees           = new Array({$htmlTrees});
+    var inputStatus     = new Array({$inputStatus});
+    var filesOnly       = new Array({$files_only});
+    var imageView       = new Array({$image_view});
+    var hideOnSelect    = new Array({$hideOnSelect});
 
     for (var i=0; i<tvIds.length; i++) {
-        var inputID = 'tv'+ tvIds[i];
-        if ($(inputID) != null) { 
-            new FolderSelect(inputID,trees[i],inputStatus[i],filesOnly[i],imageView[i],hideOnSelect[i]);
+        for (var j=0; j<tvIds[i].length; ++j) {
+            var inputID = 'tv'+ tvIds[i][j];
+            if ($(inputID) != null) { 
+                new FolderSelect(inputID,trees[i],inputStatus[i],filesOnly[i],imageView[i],hideOnSelect[i]);
+            }
         }
     }   
 });

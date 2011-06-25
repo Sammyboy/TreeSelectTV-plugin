@@ -1,4 +1,4 @@
-// TreeSelectTV version 0.1.1 for MODx Evolution 
+// TreeSelectTV version 0.1.2 for MODx Evolution 
 
 var FolderSelect = new Class({
     initialize: function(inputID,tree,inputStatus,filesOnly,imageView,hideOnSelect) {

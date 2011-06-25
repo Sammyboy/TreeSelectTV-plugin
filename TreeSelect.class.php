@@ -5,7 +5,7 @@
 //  Class for the
 //  TreeSelectTV for MODx Evolution
 //
-//  @version    0.1.1
+//  @version    0.1.2
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //
@@ -23,15 +23,15 @@ class TreeSelect {
     
     function getDirList(&$list = null, $folder = "", $depth = null) {
     // --> Generates an array of folders and files
-        if (!strlen($this->config['folders']['base']) && !strlen($folder)) return;
+        if (!strlen($this->config['folders']['start']) && !strlen($folder)) return;
         if (!isset($list)) $list = $this->treeList;
-        $folder         = (strlen($folder) ? trim($folder, "/*") : trim($this->config['folders']['base'], "/*"))."/";
+        $folder         = (strlen($folder) ? trim($folder, "/") : trim($this->config['folders']['start'], "/"))."/";
         $depth          = ($depth === null) ? $this->config['depth'] : $depth;
         $folders_only   = $this->config['folders']['only'];
         $files_only     = isset($this->config['files']['only']) ? $this->config['files']['only'] : false;
-        if ($handle = opendir(MODX_BASE_PATH.$folder)) {
+        if ($handle = opendir($this->config['folders']['base'].$folder)) {
             while ($file = readdir($handle)) {
-                $path = MODX_BASE_PATH.$folder.$file;
+                $path = $this->config['folders']['base'].$folder.$file;
                 $is_dir = is_dir($path);
                 $is_file = is_file($path);
                 $has_size = true;
@@ -69,7 +69,7 @@ class TreeSelect {
                     	}
                     }  else {
                         $list[$key]['type'] = 'file';
-                        // Check if file an image
+                        // Check if file is an image
                         $is_image = getimagesize($path);
                         if ($is_image !== false) {
                             // ... and add it to the array
@@ -105,9 +105,9 @@ class TreeSelect {
         if (!isset($list)) $list = $this->treeList;
         // Set configuration parameters
         $separator      = isset($this->config['separator'])         ? $this->config['separator'] : "/";
-        $tpl_Outer      = isset($this->config['tpl_Outer'])         ? $this->config['tpl_Outer'] :
+        $outerTpl      = isset($this->config['outerTpl'])         ? $this->config['outerTpl'] :
                             '<ul class="item_group level_[+tsp.level+]">[+tsp.wrapper+]</ul>';
-        $tpl_Inner      = isset($this->config['tpl_Inner'])         ? $this->config['tpl_Inner'] :
+        $innerTpl      = isset($this->config['innerTpl'])         ? $this->config['innerTpl'] :
                             '<li class="item_line [+tsp.lastItem+]" path="[+tsp.path+]">'.
                             '<span class="item_text">[+tsp.name+]</span>[+tsp.wrapper+]</li>';
         $output = "";
@@ -134,7 +134,7 @@ class TreeSelect {
             $ph['[+tsp.lastItem+]'] = !isset($li['subfolder']) ? "last_item" : "";
             $ph['[+tsp.wrapper+]']  = isset($li['subfolder']) ? $this->list2HTML($li['subfolder'], $new_path, $level + 1, $counter) : "";
             // ... and parse them
-            $output .= str_replace(array_keys($ph), array_values($ph), $tpl_Inner);
+            $output .= str_replace(array_keys($ph), array_values($ph), $innerTpl);
         }
         if (strlen($output)) {
             // Set placeholders für list output
@@ -142,7 +142,7 @@ class TreeSelect {
             $ph['[+tsp.level+]']    = $level;
             $ph['[+tsp.wrapper+]']  = $output;
             // ... and parse them
-            $output = str_replace(array_keys($ph), array_values($ph), $tpl_Outer);
+            $output = str_replace(array_keys($ph), array_values($ph), $outerTpl);
         }
 
         return $output;
