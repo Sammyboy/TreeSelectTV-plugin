@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+
+  <title>Sammyboy/TreeSelectTV-plugin @ GitHub</title>
+
+  <style type="text/css">
+    body {
+      margin-top: 1.0em;
+      background-color: #fbad15;
+      font-family: Helvetica, Arial, FreeSans, san-serif;
+      color: #000000;
+    }
+    #container {
+      margin: 0 auto;
+      width: 700px;
+    }
+    h1 { font-size: 3.8em; color: #0452ea; margin-bottom: 3px; }
+    h1 .small { font-size: 0.4em; }
+    h1 a { text-decoration: none }
+    h2 { font-size: 1.5em; color: #0452ea; }
+    h3 { text-align: center; color: #0452ea; }
+    a { color: #0452ea; }
+    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
+    .download { float: right; }
+    pre { background: #000; color: #fff; padding: 15px;}
+    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
+    .footer { text-align:center; padding-top:30px; font-style: italic; }
+  </style>
+</head>
+
+<body>
+  <a href="http://github.com/Sammyboy/TreeSelectTV-plugin"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+
+  <div id="container">
+
+    <div class="download">
+      <a href="http://github.com/Sammyboy/TreeSelectTV-plugin/zipball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
+      <a href="http://github.com/Sammyboy/TreeSelectTV-plugin/tarball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+    </div>
+
+    <h1><a href="http://github.com/Sammyboy/TreeSelectTV-plugin">TreeSelectTV-plugin</a>
+      <span class="small">by <a href="http://github.com/Sammyboy">Sammyboy</a></span></h1>
+
+    <div class="description">
+      Plugin for the MODX Evolution content management framework
+    </div>
+
+    <p>This plugin can be used to display one or more folder trees in the manager 
+backend of MODX Evolution and make files and/or folders selectable by the user.
+The selected folder or file is then displayed in the input field of a 
+template variable (TV) as a path to the file or folder.
+
+As you can see in the configuration file "configs/default_config.inc.php",
+there are many options for a custom configuration and file filtering.
+The visual styles can be set in the "TreeSelect.styles.css" and the templates 
+in the configuration file(s).</p><h2>Install</h2>
+<p>1.  Download the archive file and unzip/untar it into a local directiory.
+
+
+2.  Create a new folder "assets/plugins/TreeSelect" in the MODx-installation 
+    directory and copy the following files into it:
+
+        TreeSelect.class.php
+        TreeSelect.core.php
+        TreeSelect.functions.js
+        TreeSelect.styles.css
+        configs/default_config.inc.php
+
+    (Alternatively you can use a custom name for the new plugin folder and put
+    it in the "pluginPath" field of the plugin configuration.)
+
+
+3.  Set up the plugin:
+
+    Create a new plugin in the manager backend of MODx:
+    
+    a.  In the "General" tab
+        use these values
+
+            "Plugin name":  TreeSelect
+            "Description":  <strong>0.1.2</strong> TreeSelectTV plugin 
+            
+        Open the file
+
+            plugin.TreeSelect.php
+
+        in a texteditor and copy the content of this file as the "Plugin code"
+        into the new plugin.
+
+    b.  In the "Configuration" tab
+        insert the following line as "Plugin configuration":
+
+            &pluginPath=Plugin path;string;assets/plugins/TreeSelect/ &tvids=TV IDs;string; &tplids=Template IDs;string; &roles=Roles;string; &input_status=Inputfield status;list;hide,show,toggle;hide &list_separator=Separator;string;/ &list_depth=Tree depth;int;-1 &list_hideOnSelect=Hide on select;list;yes,no;no &list_image_view=Image preview;list;yes,no;yes &list_folders_base=Base folder;string; &list_folders_start=Start folder;string; &list_folders_filter=Folders to ignore (reg. expr.);string;^\.+ &list_folders_accept=Folders to accept (reg. expr.);string;.* &list_folders_only=Folders only;list;yes,no;no &list_files_filter=Files to ignore;string;^\.+ &list_files_accept=Files to accept;string;.* &list_files_skip_0b=Skip empty files;list;yes,no;no &list_files_maxsize=Max. filesize;int;-1 &list_files_minsize=Min. filesize;int;-1 &list_files_only=Files only;list;yes,no;no
+
+    c.  In the "System Events" tab
+        Activate "OnDocFormRender".
+
+
+4.  Create one or more template variables of the type Text and make it usable
+    with the template(s) of your site.</p>
+<h2>License</h2>
+<p>http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)</p>
+<h2>Authors</h2>
+<p>Sam (sam@gmx-topmail.de)<br/><br/>      </p>
+<h2>Contact</h2>
+<p> (sam@gmx-topmail.de)<br/>      </p>
+
+
+    <h2>Download</h2>
+    <p>
+      You can download this project in either
+      <a href="http://github.com/Sammyboy/TreeSelectTV-plugin/zipball/master">zip</a> or
+      <a href="http://github.com/Sammyboy/TreeSelectTV-plugin/tarball/master">tar</a> formats.
+    </p>
+    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
+      by running:
+      <pre>$ git clone git://github.com/Sammyboy/TreeSelectTV-plugin</pre>
+    </p>
+
+    <div class="footer">
+      get the source code on GitHub : <a href="http://github.com/Sammyboy/TreeSelectTV-plugin">Sammyboy/TreeSelectTV-plugin</a>
+    </div>
+
+  </div>
+
+  
+</body>
+</html>
