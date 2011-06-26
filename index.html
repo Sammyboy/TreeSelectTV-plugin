@@ -66,10 +66,10 @@ in the configuration file(s).</p><h2>Install</h2>
     directory and copy the following files into it:<br />
 
         <pre>TreeSelect.class.php<br />
-        TreeSelect.core.php<br />
-        TreeSelect.functions.js<br />
-        TreeSelect.styles.css<br />
-        configs/default_config.inc.php</pre><br />
+TreeSelect.core.php<br />
+TreeSelect.functions.js<br />
+TreeSelect.styles.css<br />
+configs/default_config.inc.php</pre><br />
 
     (Alternatively you can use a custom name for the new plugin folder and put
     it in the "pluginPath" field of the plugin configuration.)
@@ -96,7 +96,7 @@ in the configuration file(s).</p><h2>Install</h2>
     <li>In the "Configuration" tab
         insert the following line as "Plugin configuration":
 
-            &pluginPath=Plugin path;string;assets/plugins/TreeSelect/ &tvids=TV IDs;string; &tplids=Template IDs;string; &roles=Roles;string; &input_status=Inputfield status;list;hide,show,toggle;hide &list_separator=Separator;string;/ &list_depth=Tree depth;int;-1 &list_hideOnSelect=Hide on select;list;yes,no;no &list_image_view=Image preview;list;yes,no;yes &list_folders_base=Base folder;string; &list_folders_start=Start folder;string; &list_folders_filter=Folders to ignore (reg. expr.);string;^\.+ &list_folders_accept=Folders to accept (reg. expr.);string;.* &list_folders_only=Folders only;list;yes,no;no &list_files_filter=Files to ignore;string;^\.+ &list_files_accept=Files to accept;string;.* &list_files_skip_0b=Skip empty files;list;yes,no;no &list_files_maxsize=Max. filesize;int;-1 &list_files_minsize=Min. filesize;int;-1 &list_files_only=Files only;list;yes,no;no
+            <pre>&pluginPath=Plugin path;string;assets/plugins/TreeSelect/ &tvids=TV IDs;string; &tplids=Template IDs;string; &roles=Roles;string; &input_status=Inputfield status;list;hide,show,toggle;hide &list_separator=Separator;string;/ &list_depth=Tree depth;int;-1 &list_hideOnSelect=Hide on select;list;yes,no;no &list_image_view=Image preview;list;yes,no;yes &list_folders_base=Base folder;string; &list_folders_start=Start folder;string; &list_folders_filter=Folders to ignore (reg. expr.);string;^\.+ &list_folders_accept=Folders to accept (reg. expr.);string;.* &list_folders_only=Folders only;list;yes,no;no &list_files_filter=Files to ignore;string;^\.+ &list_files_accept=Files to accept;string;.* &list_files_skip_0b=Skip empty files;list;yes,no;no &list_files_maxsize=Max. filesize;int;-1 &list_files_minsize=Min. filesize;int;-1 &list_files_only=Files only;list;yes,no;no</pre>
 </li>
     <li>In the "System Events" tab<br/>
         Activate "OnDocFormRender".</li>
