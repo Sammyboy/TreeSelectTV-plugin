@@ -1,33 +1,11 @@
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-  <meta charset='utf-8'>
+    <meta charset='utf-8'>
 
-  <title>Sammyboy/TreeSelectTV-plugin @ GitHub</title>
+    <title>Sammyboy/TreeSelectTV-plugin @ GitHub</title>
 
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #fff;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #0452ea; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #0452ea; }
-    h3 { text-align: center; color: #0452ea; }
-    a { color: #0452ea; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
+    <link rel="stylesheet" type="text/css" href="styles.css" media="screen" />
 </head>
 
 <body>
@@ -80,15 +58,15 @@ configs/default_config.inc.php</pre><br />
 
     Create a new plugin in the manager backend of MODx:
     <ol>
-    <li>a.  In the "General" tab
-        use these values
-
-            "Plugin name":  TreeSelect
-            "Description":  <strong>0.1.2</strong> TreeSelectTV plugin 
+    <li>In the "General" tab<br />
+        use these values<br />
+        
+            "Plugin name":  TreeSelect<br />
+            "Description":  <strong>0.1.2</strong> TreeSelectTV plugin<br />
             
-        Open the file
+        Open the file<br />
 
-            plugin.TreeSelect.php
+            <pre>plugin.TreeSelect.php</pre><br />
 
         in a texteditor and copy the content of this file as the "Plugin code"
         into the new plugin.</li>
@@ -96,7 +74,28 @@ configs/default_config.inc.php</pre><br />
     <li>In the "Configuration" tab
         insert the following line as "Plugin configuration":
 
-            <pre>&pluginPath=Plugin path;string;assets/plugins/TreeSelect/ &tvids=TV IDs;string; &tplids=Template IDs;string; &roles=Roles;string; &input_status=Inputfield status;list;hide,show,toggle;hide &list_separator=Separator;string;/ &list_depth=Tree depth;int;-1 &list_hideOnSelect=Hide on select;list;yes,no;no &list_image_view=Image preview;list;yes,no;yes &list_folders_base=Base folder;string; &list_folders_start=Start folder;string; &list_folders_filter=Folders to ignore (reg. expr.);string;^\.+ &list_folders_accept=Folders to accept (reg. expr.);string;.* &list_folders_only=Folders only;list;yes,no;no &list_files_filter=Files to ignore;string;^\.+ &list_files_accept=Files to accept;string;.* &list_files_skip_0b=Skip empty files;list;yes,no;no &list_files_maxsize=Max. filesize;int;-1 &list_files_minsize=Min. filesize;int;-1 &list_files_only=Files only;list;yes,no;no</pre>
+<pre>
+&pluginPath=Plugin path;string;assets/plugins/TreeSelect/
+&tvids=TV IDs;string;
+&tplids=Template IDs;string;
+&roles=Roles;string;
+&input_status=Inputfield status;list;hide,show,toggle;hide
+&list_separator=Separator;string;/
+&list_depth=Tree depth;int;-1
+&list_hideOnSelect=Hide on select;list;yes,no;no
+&list_image_view=Image preview;list;yes,no;yes
+&list_folders_base=Base folder;string;
+&list_folders_start=Start folder;string;
+&list_folders_filter=Folders to ignore (reg. expr.);string;^\.+
+&list_folders_accept=Folders to accept (reg. expr.);string;.*
+&list_folders_only=Folders only;list;yes,no;no
+&list_files_filter=Files to ignore;string;^\.+
+&list_files_accept=Files to accept;string;.*
+&list_files_skip_0b=Skip empty files;list;yes,no;no
+&list_files_maxsize=Max. filesize;int;-1
+&list_files_minsize=Min. filesize;int;-1
+&list_files_only=Files only;list;yes,no;no
+</pre>
 </li>
     <li>In the "System Events" tab<br/>
         Activate "OnDocFormRender".</li>
