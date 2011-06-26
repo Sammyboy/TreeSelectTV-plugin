@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta charset='utf-8'>
+
+    <title>Sammyboy/TreeSelectTV-plugin @ GitHub</title>
+
+    <link rel="stylesheet" type="text/css" href="styles.css" media="screen" />
+</head>
+
+<body>
+  <a href="http://github.com/Sammyboy/TreeSelectTV-plugin"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+
+  <div id="container">
+
+    <div class="download">
+      <a href="http://github.com/Sammyboy/TreeSelectTV-plugin/zipball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
+      <a href="http://github.com/Sammyboy/TreeSelectTV-plugin/tarball/master">
+        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
+    </div>
+
+    <h1><a href="http://github.com/Sammyboy/TreeSelectTV-plugin">TreeSelectTV-plugin</a><br />
+      <span class="small">by <a href="http://github.com/Sammyboy">Sammyboy</a></span></h1>
+
+    <div class="description">
+      Plugin for the MODX Evolution content management framework
+    </div>
+<p><a href="index.html">Start page</a></p>
+    <h2>Installation</h2>
+<ol>
+<li>Download the archive file and unzip/untar it into a local directiory.</li>
+
+
+<li>Create a new folder "assets/plugins/TreeSelect" in the MODx-installation 
+    directory and copy the following files into it:<br />
+
+        <pre>TreeSelect.class.php
+TreeSelect.core.php
+TreeSelect.functions.js
+TreeSelect.styles.css
+configs/default_config.inc.php</pre><br />
+
+    (Alternatively you can use a custom name for the new plugin folder and put
+    it in the "pluginPath" field of the plugin configuration.)
+</li>
+
+
+<li><strong>Set up the plugin:</strong><br />
+
+    Create a new plugin in the manager backend of MODx:
+    <ol>
+    <li>In the "General" tab<br />
+        use these values<br />
+        
+            <pre>"Plugin name":  TreeSelect<br />"Description":  &lt;strong&gt;0.1.2&lt;/strong&gt; TreeSelectTV plugin</pre><br />
+            
+        Open the file<br />
+
+            <pre>plugin.TreeSelect.php</pre><br />
+
+        in a texteditor and copy the content of this file as the "Plugin code"
+        into the new plugin.</li>
+
+    <li>In the "Configuration" tab
+        insert the following line as "Plugin configuration":
+
+<pre>
+&pluginPath=Plugin path;string;assets/plugins/TreeSelect/
+&tvids=TV IDs;string;
+&tplids=Template IDs;string;
+&roles=Roles;string;
+&input_status=Inputfield status;list;hide,show,toggle;hide
+&list_separator=Separator;string;/
+&list_depth=Tree depth;int;-1
+&list_hideOnSelect=Hide on select;list;yes,no;no
+&list_image_view=Image preview;list;yes,no;yes
+&list_folders_base=Base folder;string;
+&list_folders_start=Start folder;string;
+&list_folders_filter=Folders to ignore (reg. expr.);string;^\.+
+&list_folders_accept=Folders to accept (reg. expr.);string;.*
+&list_folders_only=Folders only;list;yes,no;no
+&list_files_filter=Files to ignore;string;^\.+
+&list_files_accept=Files to accept;string;.*
+&list_files_skip_0b=Skip empty files;list;yes,no;no
+&list_files_maxsize=Max. filesize;int;-1
+&list_files_minsize=Min. filesize;int;-1
+&list_files_only=Files only;list;yes,no;no
+</pre>
+    </li>
+        <li>In the "System Events" tab<br/>
+            Activate "<strong><em>OnDocFormRender</em></strong>".</li>
+    </ol></li>
+
+    <li>Create one or more template variables of the type Text and make it usable
+        with the template(s) of your site.</li>
+    </ol>
+
+
+
+  </div>
+
+  
+</body>
+</html>
