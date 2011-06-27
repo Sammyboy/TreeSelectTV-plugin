@@ -29,7 +29,7 @@ Installation:
 
         TreeSelect.class.php
         TreeSelect.core.php
-        TreeSelect.functions.js
+        TreeSelect.class.js
         TreeSelect.styles.css
         configs/default_config.inc.php
 
