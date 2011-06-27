@@ -91,7 +91,7 @@ B.  For at least two TVs with different trees, follow these instructions to
       · Rename it to "*.config.inc.php" (where * should be replaced by a
         name of your choice, e.g. "tv23.config.inc.php").
       · Edit the file and set the correct values in there.
-      · Make sure it is placed it in the folder "configs/".
+      · Make sure it is placed in the folder "configs/".
     
     Inside the new file you may delete the lines (and comments) you don't
     need, except of the first and the last line.
@@ -110,9 +110,9 @@ MODX-base-path/
     assets/
         plugins/
             TreeSelect/
+                TreeSelect.class.js
                 TreeSelect.class.php
                 TreeSelect.core.php
-                TreeSelect.functions.js
                 TreeSelect.styles.css
                 configs/
                     default_config.inc.php

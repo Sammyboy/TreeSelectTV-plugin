@@ -99,8 +99,8 @@ B.  Für mindestens zwei TVs mit verschiedenen Listen:
 Die wichtigste Anpassung sind die IDs der (in Punkt 4) angelegten TVs, damit das
 Plugin überhaupt funktioniert.
 
-Die IDs findet man im Manager-Backend als Zahlen in Klammern hinter den
-jeweiligen TV- und Template-Namen.
+Die IDs findet man im Manager-Backend in der Listenansicht als Zahlen in
+Klammern hinter den jeweiligen TV- und Template-Namen.
 
 
 Beispiel-Verzeichnisstruktur für das Plugin:
@@ -109,9 +109,9 @@ MODX-base-path/
     assets/
         plugins/
             TreeSelect/
+                TreeSelect.class.js
                 TreeSelect.class.php
                 TreeSelect.core.php
-                TreeSelect.functions.js
                 TreeSelect.styles.css
                 configs/
                     default_config.inc.php
