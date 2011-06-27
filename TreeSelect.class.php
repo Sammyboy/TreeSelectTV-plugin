@@ -68,20 +68,20 @@ class TreeSelect {
                      (!strlen($filter) || !preg_match("/".$filter."/", $file)) &&
                      (!strlen($accept) || preg_match("/".$accept."/", $file)) ) {
 
-                	$key = count($list);
+                    $key = count($list);
 
-                	$list[$key]['name'] = $file;
-                	$list[$key]['size'] = $size;
-                	$list[$key]['formated_size'] = $this->format_bytes($size, $this->config['size_decimals']);
+                    $list[$key]['name'] = $file;
+                    $list[$key]['size'] = $size;
+                    $list[$key]['formated_size'] = $this->format_bytes($size, $this->config['size_decimals']);
 
-                	if ($is_dir) {
-                    	$list[$key]['type'] = 'folder';
-                    	// Get subfolders
-                    	if (($depth === false) || ($depth > 0)) {
-                    	    $list[$key]['subfolder'] = $this->getDirList($list[$key]['subfolder'], $folder.$file, ($depth) ? $depth-1 : $depth);
-                    	    if (!is_array($list[$key]['subfolder']) || !count($list[$key]['subfolder'])) unset($list[$key]['subfolder']);
-                    	}
-                    	
+                    if ($is_dir) {
+                        $list[$key]['type'] = 'folder';
+                        // Get subfolders
+                        if (($depth === false) || ($depth > 0)) {
+                            $list[$key]['subfolder'] = $this->getDirList($list[$key]['subfolder'], $folder.$file, ($depth) ? $depth-1 : $depth);
+                            if (!is_array($list[$key]['subfolder']) || !count($list[$key]['subfolder'])) unset($list[$key]['subfolder']);
+                        }
+                        
                     }  else {
                         $list[$key]['type'] = 'file';
                         // Check if file is an image
@@ -145,10 +145,10 @@ class TreeSelect {
                     $list[$k[0]] = $list[$k[1]];
                     $list[$k[1]] = $tmp;
                     $sorted = false;
-			    }
+                }
 
-		    } // end inner loop
-		    if ($sorted) return $list;
+            } // end inner loop
+            if ($sorted) return $list;
         } // end outer loop
     }
 

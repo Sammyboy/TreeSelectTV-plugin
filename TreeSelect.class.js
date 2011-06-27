@@ -54,7 +54,7 @@ var TreeSelect = new Class({
         }
         // set event behavior for items
         this.selectors.set({
-		    'events': {
+            'events': {
                 mouseover: function() { this.addClass('hover'); },
                 mouseleave: function() { this.removeClass('hover'); },
                 click: function() {
@@ -63,10 +63,10 @@ var TreeSelect = new Class({
                     if (!selector_line.hasClass('new_select')) selector_line.addClass('new_select');
                 }
             }
-		});
-		// set event behavior for togglers
-		this.togglers.set({
-		    'events': {
+        });
+        // set event behavior for togglers
+        this.togglers.set({
+            'events': {
                 mouseover: function() { this.addClass('hover'); },
                 mouseleave: function() { this.removeClass('hover'); },
                 click: function() {
@@ -75,8 +75,8 @@ var TreeSelect = new Class({
                     if (!selector_line.hasClass('new_toggle')) selector_line.addClass('new_toggle');
                 }
             }
-		});
-		// set event bahavior for the box
+        });
+        // set event bahavior for the box
         this.box.set({
             'events': {
                 click: function() {
