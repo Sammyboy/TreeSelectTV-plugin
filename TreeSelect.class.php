@@ -5,7 +5,7 @@
 //  Class for the
 //  TreeSelectTV for MODx Evolution
 //
-//  @version    0.1.2
+//  @version    0.1.3
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //
@@ -19,6 +19,15 @@ class TreeSelect {
         $this->config = $config;
         $this->treeList = array();
         $this->treeList = $this->getDirList();
+    }
+
+    protected function format_bytes($bytes, $round_nr) {
+    // --> Formats filesizes to a shorter format
+        if ($bytes < 1024) return $bytes.' B';
+        elseif ($bytes < 1048576) return number_format(round($bytes / 1024, $round_nr), $round_nr).' KB';
+        elseif ($bytes < 1073741824) return number_format(round($bytes / 1048576, $round_nr), $round_nr).' MB';
+        elseif ($bytes < 1099511627776) return number_format(round($bytes / 1073741824, $round_nr), $round_nr).' GB';
+        else return number_format(round($bytes / 1099511627776, $round_nr), $round_nr).' TB';
     }
     
     function getDirList(&$list = null, $folder = "", $depth = null) {
@@ -52,14 +61,19 @@ class TreeSelect {
                                         $this->config['folders']['accept'] : "") : 
                                     ((isset($this->config['files']['accept'])   && $this->config['files']['accept'])    ?
                                         $this->config['files']['accept'] : "");
-                // ... and use them
+                // … and use them
                 if ( $has_size &&
                      (($folders_only === false) || ($folders_only && $is_dir)) &&
                      !in_array($file, array(".","..")) && 
                      (!strlen($filter) || !preg_match("/".$filter."/", $file)) &&
                      (!strlen($accept) || preg_match("/".$accept."/", $file)) ) {
-                	$list[]['name'] = $file;
-                	$key = count($list)-1;
+
+                	$key = count($list);
+
+                	$list[$key]['name'] = $file;
+                	$list[$key]['size'] = $size;
+                	$list[$key]['formated_size'] = $this->format_bytes($size, $this->config['size_decimals']);
+
                 	if ($is_dir) {
                     	$list[$key]['type'] = 'folder';
                     	// Get subfolders
@@ -67,28 +81,77 @@ class TreeSelect {
                     	    $list[$key]['subfolder'] = $this->getDirList($list[$key]['subfolder'], $folder.$file, ($depth) ? $depth-1 : $depth);
                     	    if (!is_array($list[$key]['subfolder']) || !count($list[$key]['subfolder'])) unset($list[$key]['subfolder']);
                     	}
+                    	
                     }  else {
                         $list[$key]['type'] = 'file';
                         // Check if file is an image
                         $is_image = getimagesize($path);
                         if ($is_image !== false) {
-                            // ... and add it to the array
+                            // … and add it to the array
                             $list[$key]['img']['src'] = '../'.$folder.$file;
                             list($list[$key]['img']['width'], $list[$key]['img']['height']) = $is_image;
                         }
-                        if ($size < 1024) $list[$key]['size'] = $size.' B';
-                        elseif ($size < 1048576) $list[$key]['size'] = round($size / 1024, 2).' kB';
-                        elseif ($size < 1073741824) $list[$key]['size'] = round($size / 1048576, 2).' MB';
-                        elseif ($size < 1099511627776) $list[$key]['size'] = round($size / 1073741824, 2).' GB';
                     }
                 }
             }
             closedir($handle);
+            // remove empty folders
             if ($files_only) $list = $this->removeEmptyFolders($list);
+            // sort the list
+            $list = $this->sortList($list);
         } else return "Folder {$folder} not found";
         return $list;
     }
     
+    function sortList(&$list = null) {
+    // --> Sorts the list by the options, set in the configuration
+        if (!isset($list)) $list = $this->treeList;
+        if (!isset($list)) return false;
+        if (!$this->config['sortBy'] || !in_array($this->config['sortBy'], array("name","size")) || (count($list) < 2)) return $list;
+
+        // outer loop
+        for ($key_a = count($list)-1; $key_a >= 0; $key_a--) {
+            $sorted = true;
+            // inner loop
+            for ($key_b = 0; $key_b < $key_a; $key_b++) {
+                // set key values depending on the sorting direction
+                if ($this->config['sortDir'] == "desc") {
+                    $k[0] = $key_b;
+                    $k[1] = $key_b + 1;
+                } else {
+                    $k[0] = $key_b + 1;
+                    $k[1] = $key_b;
+                }
+
+                if (($list[$k[0]]['type'] != $list[$k[1]]['type']) && $this->config['sortFirst']) {
+                    if ((($this->config['sortFirst'] == "folders") && ($this->config['sortDir'] == "asc")) ||
+                         ($this->config['sortFirst'] == "files") && ($this->config['sortDir'] == "desc"))
+                        // folders first 
+                        $res = ($list[$k[0]]['type'] == 'folder') && ($list[$k[1]]['type'] == 'file') ? -1 : 1;
+                    else
+                        // files first
+                        $res = ($list[$k[0]]['type'] == 'folder') && ($list[$k[1]]['type'] == 'file') ? 1 : -1;
+                } else {
+                    // set the values to sort by
+                    $val[0] = $list[$k[0]][$this->config['sortBy']];
+                    $val[1] = $list[$k[1]][$this->config['sortBy']];
+                    // compare the values
+                    $res = is_numeric($val[0]) && is_numeric($val[1]) ? $val[0] - $val[1] : strcmp($val[0], $val[1]);
+                }
+
+                // swap the list items
+                if ($res < 0) {
+                    $tmp = $list[$k[0]];
+                    $list[$k[0]] = $list[$k[1]];
+                    $list[$k[1]] = $tmp;
+                    $sorted = false;
+			    }
+
+		    } // end inner loop
+		    if ($sorted) return $list;
+        } // end outer loop
+    }
+
     function removeEmptyFolders(&$list = null) {
     // --> Removes folders with no files
         if (!isset($list)) $list = $this->treeList;
@@ -97,13 +160,15 @@ class TreeSelect {
                 if (!isset($li['subfolder']) || !count($li['subfolder'])) unset($list[$key]);
             }
         }
+        sort($list);
+        reset($list);
         return $list;
     }
 
     function list2HTML(&$list = null, $path = "", $level = 1, $counter = 0) {
     // --> Generates HTML list output
         if (!isset($list)) $list = $this->treeList;
-        // Set configuration parameters
+        // set configuration parameters
         $separator      = isset($this->config['separator'])         ? $this->config['separator'] : "/";
         $outerTpl      = isset($this->config['outerTpl'])         ? $this->config['outerTpl'] :
                             '<ul class="item_group level_[+tsp.level+]">[+tsp.wrapper+]</ul>';
@@ -120,28 +185,28 @@ class TreeSelect {
                 preg_match("/\.(.+)$/", $li['name'], $ext);
                 if (count($ext) && strlen($ext[0])) $filetype = "filetype-".strtolower(trim($ext[0], "\."));
             }
-            // Set placeholders for row output
+            // set placeholders for row output
             $ph =  array();
             $ph['[+tsp.name+]']     = $li['name'];
             $ph['[+tsp.img_src+]']  = isset($li['img']['src']) ? $li['img']['src'] : "";
             $ph['[+tsp.img_w+]']    = isset($li['img']['width']) ? $li['img']['width'] : "";
             $ph['[+tsp.img_h+]']    = isset($li['img']['height']) ? $li['img']['height'] : "";
-            $ph['[+tsp.size+]']     = $li['size'];
+            $ph['[+tsp.size+]']     = $li['type'] == 'file' ? $li['formated_size'] : null;
             $ph['[+tsp.path+]']     = $new_path;
             $ph['[+tsp.level+]']    = $level;
             $ph['[+tsp.type+]']     = $li['type'];
             $ph['[+tsp.filetype+]'] = $filetype;
             $ph['[+tsp.lastItem+]'] = !isset($li['subfolder']) ? "last_item" : "";
             $ph['[+tsp.wrapper+]']  = isset($li['subfolder']) ? $this->list2HTML($li['subfolder'], $new_path, $level + 1, $counter) : "";
-            // ... and parse them
+            // … and parse them
             $output .= str_replace(array_keys($ph), array_values($ph), $innerTpl);
         }
         if (strlen($output)) {
-            // Set placeholders für list output
+            // set placeholders für list output
             $ph =  array();
             $ph['[+tsp.level+]']    = $level;
             $ph['[+tsp.wrapper+]']  = $output;
-            // ... and parse them
+            // … and parse them
             $output = str_replace(array_keys($ph), array_values($ph), $outerTpl);
         }
 

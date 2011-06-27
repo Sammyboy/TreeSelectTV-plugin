@@ -5,7 +5,7 @@
 //  Core part of the
 //  TreeSelectTV for MODx Evolution
 //
-//  @version    0.1.2
+//  @version    0.1.3
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //
@@ -16,6 +16,7 @@ global $content,$default_template;
 // Include other parts of the package:
 // Class
 include $pluginPath."TreeSelect.class.php";
+
 // Config files
 $settings = $options = array();
 include $pluginPath."configs/default_config.inc.php";
@@ -28,8 +29,12 @@ $settings['input']['status']    = $input_status == "hide" ? "" : $input_status;
 $settings['list']['separator']          = $list_separator;
 $settings['list']['depth']              = $list_depth == -1 ? false : $list_depth;
 $settings['list']['hideOnSelect']       = $list_hideOnSelect == "yes" ? true : false;
-
+$settings['list']['sortBy']             = $list_sortBy == "unsorted" ? false : $list_sortBy;
+$settings['list']['sortDir']            = $list_sortDirection == "lower -> upper" ? "asc" : "desc";
+$settings['list']['sortFirst']          = $list_sortFirst == "not set" ? false : strtolower($list_sortFirst);
 $settings['list']['image_view']         = $list_image_view == "yes" ? true : false;
+$settings['list']['size_decimals']      = $list_sizeDecimals > 0 ? $list_sizeDecimals : 0;
+$settings['list']['path_base']          = strtolower($list_path_base);
 
 $settings['list']['folders']['base']    = $list_folders_base;
 $settings['list']['folders']['start']   = $list_folders_start;
@@ -60,7 +65,7 @@ if (count($configFiles)) {
 else $options[] = $default_settings;
 
 // Initialize things
-$tvIds = $htmlTrees = $inputStatus = $files_only = $image_view = $hideOnSelect = "";
+$tvIds = $htmlTrees = $inputStatus = $files_only = $image_view = $hideOnSelect = $basePaths = "";
 
 $cur_tpl    = isset($_POST['template']) ? $_POST['template'] : (isset($content['template']) ? $content['template'] : $default_template);
 $cur_role   = $_SESSION['mgrRole'];
@@ -69,6 +74,7 @@ $cur_role   = $_SESSION['mgrRole'];
 foreach ($options as $option) {
     $input_opt = $option['input'];
     $list_opt = $option['list'];
+    $sep = $list_opt['separator'];
     
     // Check if the current template matches and user has the right role
     $tpl    = ($input_opt['tplids']) ? explode(',', $input_opt['tplids']) : false;
@@ -87,12 +93,19 @@ foreach ($options as $option) {
                         ((isset($list_opt['image_view']) && $list_opt['image_view']) ? "true" : "false");
     $hideOnSelect   .=  (strlen($hideOnSelect) ? "," : "").
                         ((isset($list_opt['hideOnSelect']) && $list_opt['hideOnSelect']) ? "true" : "false");
+    $basePaths      .=  (strlen($basePaths) ? "," : "")."'".
+                        (isset($list_opt['path_base']) && ($list_opt['path_base'] != "start folder") ?
+                            ($list_opt['path_base'] == "server root" ?
+                                $sep.trim(trim($list_opt['folders']['base'],$sep).$sep.trim($list_opt['folders']['start'],$sep)).$sep :
+                                trim($list_opt['folders']['start'],"/")."/") : 
+                            ""
+                        )."'";
 
     //TODO Implement other methods for generating different HTML coded lists (e.g. image preview or Wayfinder menu)
 
     // Generate directory listing
     $TreeSelect = new TreeSelect($list_opt);
-    
+
     if ( is_array($TreeSelect->treeList) && count($TreeSelect->treeList) ) {
 
         // ... and put it into HTML code
@@ -115,7 +128,7 @@ if ($e->name == 'OnDocFormRender') {
 
 <!-- TreeSelect -->
 <link rel="stylesheet" type="text/css" href="{$rel_pluginPath}TreeSelect.styles.css" />
-<script type="text/javascript" src="{$rel_pluginPath}TreeSelect.functions.js"></script>
+<script type="text/javascript" src="{$rel_pluginPath}TreeSelect.class.js"></script>
 <script type="text/javascript">
 window.addEvent('domready', function() {
     var tvIds           = new Array({$tvIds});
@@ -124,12 +137,13 @@ window.addEvent('domready', function() {
     var filesOnly       = new Array({$files_only});
     var imageView       = new Array({$image_view});
     var hideOnSelect    = new Array({$hideOnSelect});
+    var basePath        = new Array({$basePaths});
 
     for (var i=0; i<tvIds.length; i++) {
         for (var j=0; j<tvIds[i].length; ++j) {
             var inputID = 'tv'+ tvIds[i][j];
             if ($(inputID) != null) { 
-                new FolderSelect(inputID,trees[i],inputStatus[i],filesOnly[i],imageView[i],hideOnSelect[i]);
+                new TreeSelect(inputID,trees[i],inputStatus[i],filesOnly[i],imageView[i],hideOnSelect[i],basePath[i]);
             }
         }
     }   

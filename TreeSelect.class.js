@@ -1,7 +1,7 @@
-// TreeSelectTV version 0.1.2 for MODx Evolution 
+// Part of the TreeSelectTV plugin version 0.1.3 for the MODx Evolution CMF
 
-var FolderSelect = new Class({
-    initialize: function(inputID,tree,inputStatus,filesOnly,imageView,hideOnSelect) {
+var TreeSelect = new Class({
+    initialize: function(inputID,tree,inputStatus,filesOnly,imageView,hideOnSelect,basePath) {
         // get parameters
         this.name = inputID;
         this.input = $(inputID);
@@ -9,6 +9,7 @@ var FolderSelect = new Class({
         this.inputStatus = inputStatus;
         this.imageView = imageView;
         this.hideOnSelect = hideOnSelect;
+        this.basePath = basePath;
 
         // hide main input field
         this.input.setStyle('display','none');
@@ -31,7 +32,7 @@ var FolderSelect = new Class({
         for (var i=0; i < this.selectors.length; i++) {
             var selector_line = this.selectors[i];
             while (!selector_line.hasClass('item_line')) selector_line = this.selectors[i].getParent();
-            if (selector_line.getProperty('path') == this.input.value) {
+            if (selector_line.getProperty('path') == this.input.value.replace(this.basePath, '')) {
                 selector_line.addClass('new_select');
                 // close selected node ...
                 selector_line.addClass('close');
@@ -101,8 +102,8 @@ var FolderSelect = new Class({
 
             // set value to input field
             if (this.line.hasClass('file') || (this.line.hasClass('folder') && (this.filesOnly == false))) {
-                this.input.value = this.line.getProperty('path');
-                if (this.inputStatus !== "") this.display.innerHTML = this.line.getProperty('path');
+                this.input.value = this.basePath + this.line.getProperty('path');
+                if (this.inputStatus !== "") this.display.innerHTML = this.input.value;
                 if ((this.inputStatus == "toggle") && this.hideOnSelect) this.box.toggleClass('hide');
             }
             if (this.imageView) {

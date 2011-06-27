@@ -45,12 +45,31 @@ $settings['list']['separator']          = "/";
 $settings['list']['depth']              = false;
 //  Integer value for the level depth of subfolders; Set false for all levels
 
+$settings['list']['sortBy']             = "name";
+//  Fields to sort by
+//  Options:    "name", "size"
+
+$settings['list']['sortDir']            = "asc";
+//  Sorting direction
+//  Options:    "asc", "desc"
+
+$settings['list']['sortFirst']          = "folders";
+//  Sorting direction
+//  Options:    "folders", "files", false
+
+$settings['list']['size_decimals']      = 2;
+//  Number of decimals to display filesizes
+
 $settings['list']['hideOnSelect']       = false;
 //  Boolean value (true|false); Hides list on clicking item
 //  (only if input status is set to "toggle")
 
 $settings['list']['image_view']         = true;
 //  Boolean value (true|false); Preview for image files
+
+$settings['list']['path_base']          = "start folder";
+//  Base to display path from
+//  Options: "start folder", "website base", "server root"
 
 //---------------
 //  Folders
