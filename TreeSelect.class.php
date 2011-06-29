@@ -203,8 +203,8 @@ class TreeSelect {
             $ph['[+tsp.img_src+]']  = isset($li['img']['src']) ? $li['img']['src'] : "";
             $ph['[+tsp.img_w+]']    = isset($li['img']['width']) ? $li['img']['width'] : "";
             $ph['[+tsp.img_h+]']    = isset($li['img']['height']) ? $li['img']['height'] : "";
-            $ph['[+tsp.size+]']     = $li['formated_size'];
-//            $ph['[+tsp.size+]']     = $li['type'] == 'file' ? $li['formated_size'] : null;
+//            $ph['[+tsp.size+]']     = $li['formated_size'];
+            $ph['[+tsp.size+]']     = $li['type'] == 'file' ? $li['formated_size'] : null;
             $ph['[+tsp.path+]']     = $new_path;
             $ph['[+tsp.level+]']    = $level;
             $ph['[+tsp.type+]']     = $li['type'];
