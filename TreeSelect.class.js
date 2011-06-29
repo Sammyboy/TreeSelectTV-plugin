@@ -1,24 +1,78 @@
-// Part of the TreeSelectTV plugin version 0.1.3 for the MODx Evolution CMF
+// Part of the TreeSelectTV plugin version 0.1.4 for the MODx Evolution CMF
 
 var TreeSelect = new Class({
-    initialize: function(inputID,tree,inputStatus,filesOnly,imageView,hideOnSelect,basePath) {
+    initialize: function(inputID,tree,inputStatus,filesOnly,imageView,hideOnSelect,basePath,saveConfig) {
         // get parameters
         this.name = inputID;
         this.input = $(inputID);
+        this.table_col = this.input.getParent().getParent().getElements('td');
+
         this.filesOnly = filesOnly;
         this.inputStatus = inputStatus;
         this.imageView = imageView;
         this.hideOnSelect = hideOnSelect;
         this.basePath = basePath;
+        this.saveConfig = (saveConfig == '') ? false : saveConfig;
+        this.output = new Array();
 
         // hide main input field
         this.input.setStyle('display','none');
+
+        if (this.saveConfig) {
+            var options = '';
+            for (var i=1; i<this.saveConfig.length; i++) { options += '<option>' + this.saveConfig[i] + '</option>' }
+            this.save_box = new Element('div', { 'id':'treeBox_savebox_'+this.name, 'class':'treeBox_saveBox' });
+            this.save_open_button = new Element('span', { 'class': 'button' });
+            this.save_open_button.innerHTML = 'CONFIG';
+            filename = (this.saveConfig[0] == 'default') ? 'new file prefix:<br>'+this.name : 'existing file:<br>'+this.saveConfig[0];
+            this.save_filename = new Element('span', { 'class': 'filename' });
+            this.save_filename.innerHTML = filename;
+
+            this.save_content = new Element('div', { 'class':'treeBox_saveBoxContent hide' });
+            this.save_option = new Element('select');
+            this.save_option.innerHTML = options;
+            this.save_check = new Element('input', { 'type':'checkbox', 'name':'save_check', 'value':'true' });
+            this.save_box.adopt(this.save_open_button,this.save_content.adopt(this.save_filename,this.save_option,this.save_check));
+
+            this.table_col[0].adopt(this.save_box);
+            this.save_open_button.set({
+                'events': {
+                    mouseover: function() { this.addClass('hover'); },
+                    mouseleave: function() { this.removeClass('hover'); },
+                    click: function() {
+                        if (!this.save_check.hasClass('checked')) {
+                            this.save_box.toggleClass('open');
+                            this.save_content.toggleClass('hide');
+                        }
+                    }.bind(this)
+                }                
+            });
+            this.save_check.set({
+                'events': {
+                    mouseover: function() { this.addClass('hover'); },
+                    mouseleave: function() { this.removeClass('hover'); },
+                    click: function() {
+                        this.save_check.toggleClass('checked');
+                        this.setOutput();
+                    }.bind(this)
+                }
+            });
+            this.save_option.set({
+                'events': {
+                    mouseover: function() { this.addClass('hover'); },
+                    mouseleave: function() { this.removeClass('hover'); }
+                }
+            });
+            
+        }
+
+
 
         if (this.inputStatus != "") {
             // set new result field
             this.display = new Element('span', { 'id':'treeBoxOutput_'+this.name, 'class':'treeBox_output '+this.inputStatus });
             this.display.innerHTML = this.input.value;
-                                                  
+            this.table_col[1].adopt(this.display);
         }
         // create new elemnts
         this.box = new Element('div',{'id':'treeBox_'+this.name,'class':'treeBox'});
@@ -40,7 +94,7 @@ var TreeSelect = new Class({
         }
         // ... and open it again
         this.checkList();
-        
+        if (this.imageView) this.table_col[1].adopt(this.image);        
         // set event behavior for the button
         if (inputStatus == "toggle") {
             this.box.addClass('hide');
@@ -89,9 +143,7 @@ var TreeSelect = new Class({
         });
         
         // add the new elements to the table cell
-        if (this.imageView) this.input.getParent().adopt(this.image);
-        if (this.inputStatus != "") this.input.getParent().adopt(this.display);
-        this.input.getParent().adopt(this.box);
+        this.table_col[1].adopt(this.box);
     },
 
     checkList: function() {
@@ -101,9 +153,10 @@ var TreeSelect = new Class({
             this.line.removeClass('new_select');
 
             // set value to input field
-            if (this.line.hasClass('file') || (this.line.hasClass('folder') && (this.filesOnly == false))) {
-                this.input.value = this.basePath + this.line.getProperty('path');
-                if (this.inputStatus !== "") this.display.innerHTML = this.input.value;
+            if (this.line.hasClass('file') || (this.line.hasClass('folder') && !this.filesOnly)) {
+                this.output[0] = this.basePath + this.line.getProperty('path');
+                this.setOutput();
+                if (this.inputStatus !== "") this.display.innerHTML = this.output[0];
                 if ((this.inputStatus == "toggle") && this.hideOnSelect) this.box.toggleClass('hide');
             }
             if (this.imageView) {
@@ -187,5 +240,9 @@ var TreeSelect = new Class({
                 }
             }
         }
+    },
+    setOutput: function() {
+        if (this.saveConfig) this.output[1] = this.save_check.hasClass('checked') ? this.name+':'+this.save_option.value : '';
+        this.input.value = Json.toString(this.output);
     }
 });

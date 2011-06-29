@@ -6,10 +6,10 @@ $settings['input']['tplids']    = "5";
 $settings['input']['status']    = "show";
 
 // List
-$settings['list']['folders']['start']   = "assets/images/";
+$settings['list']['folders__start']   = "assets/images/";
 
-$settings['list']['files']['accept']    = "\.(png|jpg|gif)";
-$settings['list']['files']['skip_0b']   = true;
-$settings['list']['files']['only']      = true;
+$settings['list']['files__accept']    = "\.(png|jpg|gif)";
+$settings['list']['files__skip_0b']   = true;
+$settings['list']['files__only']      = true;
 
 ?>

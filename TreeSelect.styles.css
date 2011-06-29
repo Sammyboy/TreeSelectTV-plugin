@@ -5,6 +5,7 @@
     overflow: auto;
     border: 1px solid #ddd;*/
 }
+
 .treeBox ul {
     margin-left: 8px;
     padding-left: 0;
@@ -69,14 +70,25 @@
 /*    cursor: pointer;
     cursor: hand;*/
 }
+
+.treeBox .item_text, .treeBox .selected .item_text {
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+}
+
 .treeBox .item_text.hover, .treeBox .open .item_text.hover {
     background: #d5ffb7;
-    border: 1px solid #ccc;
+    border-color: #ccc;
 }
 .treeBox .selected .item_text {
     background: #eee;
     border: 1px solid #bbb;
 }
+
+
+
 .treeBox .file .filename {
     display: inline-block;
     min-width: 280px;
@@ -144,3 +156,53 @@
     display: none;
 }
 
+
+/* save-box */
+.treeBox_saveBox {
+    border: 1px solid #a55;
+    background: #fee;
+    //display: none;
+}
+
+.treeBox_saveBox .treeBox_saveBoxContent {
+    padding: 2px;
+    text-align: center;
+}
+
+.treeBox_saveBox span {
+    font-size: 10px;
+    display: block;
+    color: #900;
+    background: #fff0f0;
+    height: auto;
+    font-weight: bold;
+    text-align: center;
+}
+
+div.treeBox_saveBox, .treeBox_saveBox span {
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+}
+
+.treeBox_saveBox span.button.hover, .treeBox_saveBox.open span.button {
+    color: #fff;
+    background: #f55;
+}
+
+.treeBox_saveBox.open span.button {
+    border-bottom-radius: 0px;
+    -moz-border-radius-bottomleft:0px 0px; 
+    -moz-border-radius-bottomright:0px 0px; 
+    -khtml-border-radius-bottomleft:0px 00px; 
+    -khtml-border-radius-bottomright:0px 0px; 
+    -webkit-border-radius-bottomleft:0px 0px; 
+    -webkit-border-radius-bottomright:0px 0px; 
+}
+
+.treeBox_saveBox span.filename {
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #a44;
+}

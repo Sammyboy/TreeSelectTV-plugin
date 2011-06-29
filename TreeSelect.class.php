@@ -5,7 +5,7 @@
 //  Class for the
 //  TreeSelectTV for MODx Evolution
 //
-//  @version    0.1.3
+//  @version    0.1.4
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //
@@ -32,35 +32,35 @@ class TreeSelect {
     
     function getDirList(&$list = null, $folder = "", $depth = null) {
     // --> Generates an array of folders and files
-        if (!strlen($this->config['folders']['start']) && !strlen($folder)) return;
+        if (!strlen($this->config['folders__start']) && !strlen($folder)) return;
         if (!isset($list)) $list = $this->treeList;
-        $folder         = (strlen($folder) ? trim($folder, "/") : trim($this->config['folders']['start'], "/"))."/";
+        $folder         = (strlen($folder) ? trim($folder, "/") : trim($this->config['folders__start'], "/"))."/";
         $depth          = ($depth === null) ? $this->config['depth'] : $depth;
-        $folders_only   = $this->config['folders']['only'];
-        $files_only     = isset($this->config['files']['only']) ? $this->config['files']['only'] : false;
-        if ($handle = opendir($this->config['folders']['base'].$folder)) {
+        $folders_only   = $this->config['folders__only'];
+        $files_only     = isset($this->config['files__only']) ? $this->config['files__only'] : false;
+        if ($handle = opendir($this->config['folders__base'].$folder)) {
             while ($file = readdir($handle)) {
-                $path = $this->config['folders']['base'].$folder.$file;
+                $path = $this->config['folders__base'].$folder.$file;
                 $is_dir = is_dir($path);
                 $is_file = is_file($path);
                 $has_size = true;
                 // Check filesize
                 if ($is_file) {
                     $size = filesize($path);
-                    if ( ($this->config['files']['skip_0b'] && ($size == 0)) ||
-                         ($this->config['files']['minsize'] && ($size < $this->config['files']['minsize'])) ||
-                         ($this->config['files']['maxsize'] && ($size > $this->config['files']['maxsize'])) )
+                    if ( ($this->config['files__skip_0b'] && ($size == 0)) ||
+                         ($this->config['files__minsize'] && ($size < $this->config['files__minsize'])) ||
+                         ($this->config['files__maxsize'] && ($size > $this->config['files__maxsize'])) )
                         $has_size = false;
                 }
                 // Set filters for files and folders
-                $filter = $is_dir ? ((isset($this->config['folders']['filter']) && $this->config['folders']['filter'])  ?
-                                        $this->config['folders']['filter'] : "") : 
-                                    ((isset($this->config['files']['filter'])   && $this->config['files']['filter'])  ?
-                                        $this->config['files']['filter'] : "");
-                $accept = $is_dir ? ((isset($this->config['folders']['accept']) && $this->config['folders']['accept'])  ?
-                                        $this->config['folders']['accept'] : "") : 
-                                    ((isset($this->config['files']['accept'])   && $this->config['files']['accept'])    ?
-                                        $this->config['files']['accept'] : "");
+                $filter = $is_dir ? ((isset($this->config['folders__filter']) && $this->config['folders__filter'])  ?
+                                        $this->config['folders__filter'] : "") : 
+                                    ((isset($this->config['files__filter'])   && $this->config['files__filter'])  ?
+                                        $this->config['files__filter'] : "");
+                $accept = $is_dir ? ((isset($this->config['folders__accept']) && $this->config['folders__accept'])  ?
+                                        $this->config['folders__accept'] : "") : 
+                                    ((isset($this->config['files__accept'])   && $this->config['files__accept'])    ?
+                                        $this->config['files__accept'] : "");
                 // … and use them
                 if ( $has_size &&
                      (($folders_only === false) || ($folders_only && $is_dir)) &&
@@ -72,14 +72,24 @@ class TreeSelect {
 
                     $list[$key]['name'] = $file;
                     $list[$key]['size'] = $size;
-                    $list[$key]['formated_size'] = $this->format_bytes($size, $this->config['size_decimals']);
+                    
 
                     if ($is_dir) {
                         $list[$key]['type'] = 'folder';
+                        $list[$key]['size'] = 0;
                         // Get subfolders
                         if (($depth === false) || ($depth > 0)) {
                             $list[$key]['subfolder'] = $this->getDirList($list[$key]['subfolder'], $folder.$file, ($depth) ? $depth-1 : $depth);
-                            if (!is_array($list[$key]['subfolder']) || !count($list[$key]['subfolder'])) unset($list[$key]['subfolder']);
+                            $delete_sub = $files_only;
+                            if (is_array($list[$key]['subfolder']) && count($list[$key]['subfolder'])) {
+                                foreach ($list[$key]['subfolder'] as $sub) {
+                                    if ($sub['type'] == 'file') {
+                                        if ($files_only) $delete_sub = false;
+                                        $list[$key]['size'] = $list[$key]['size'] + $sub['size'];
+                                    }
+                                }
+                            }
+                            if ($delete_sub) unset($list[$key]['subfolder']);
                         }
                         
                     }  else {
@@ -92,11 +102,12 @@ class TreeSelect {
                             list($list[$key]['img']['width'], $list[$key]['img']['height']) = $is_image;
                         }
                     }
+                    $list[$key]['formated_size'] = $this->format_bytes($size, $this->config['size_decimals']);
                 }
             }
             closedir($handle);
             // remove empty folders
-            if ($files_only) $list = $this->removeEmptyFolders($list);
+            //if ($files_only) $list = $this->removeEmptyFolders($list);
             // sort the list
             $list = $this->sortList($list);
         } else return "Folder {$folder} not found";
@@ -106,7 +117,7 @@ class TreeSelect {
     function sortList(&$list = null) {
     // --> Sorts the list by the options, set in the configuration
         if (!isset($list)) $list = $this->treeList;
-        if (!isset($list)) return false;
+        if (!isset($list) || !count($list)) return;// "List is empty!";
         if (!$this->config['sortBy'] || !in_array($this->config['sortBy'], array("name","size")) || (count($list) < 2)) return $list;
 
         // outer loop
@@ -153,8 +164,9 @@ class TreeSelect {
     }
 
     function removeEmptyFolders(&$list = null) {
-    // --> Removes folders with no files
+    // --> Removes folders with no subfolders
         if (!isset($list)) $list = $this->treeList;
+        $list_count = count($list);
         foreach ($list as $key => $li) {
             if ($li['type'] == "folder") {
                 if (!isset($li['subfolder']) || !count($li['subfolder'])) unset($list[$key]);
@@ -191,7 +203,8 @@ class TreeSelect {
             $ph['[+tsp.img_src+]']  = isset($li['img']['src']) ? $li['img']['src'] : "";
             $ph['[+tsp.img_w+]']    = isset($li['img']['width']) ? $li['img']['width'] : "";
             $ph['[+tsp.img_h+]']    = isset($li['img']['height']) ? $li['img']['height'] : "";
-            $ph['[+tsp.size+]']     = $li['type'] == 'file' ? $li['formated_size'] : null;
+            $ph['[+tsp.size+]']     = $li['formated_size'];
+//            $ph['[+tsp.size+]']     = $li['type'] == 'file' ? $li['formated_size'] : null;
             $ph['[+tsp.path+]']     = $new_path;
             $ph['[+tsp.level+]']    = $level;
             $ph['[+tsp.type+]']     = $li['type'];

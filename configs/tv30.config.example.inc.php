@@ -4,10 +4,10 @@
 $settings['input']['tvids']     = "30";
 
 // List
-$settings['list']['folders']['start']   = "assets/files";
-$settings['list']['folders']['only']    = true;
+$settings['list']['folders__start']   = "assets/files";
+$settings['list']['folders__only']    = true;
 
-$settings['list']['files']['skip_0b']   = true;
-$settings['list']['files']['only']      = false;
+$settings['list']['files__skip_0b']   = true;
+$settings['list']['files__only']      = false;
 
 ?>

@@ -74,20 +74,20 @@ $settings['list']['path_base']          = "start folder";
 //---------------
 //  Folders
 //---------------
-$settings['list']['folders']['base']    = "";
+$settings['list']['folders__base']    = "";
 //  Absolute base path on the server; If empty or not set, the constant
 //  MODX_BASE_PATH will be set.
 
-$settings['list']['folders']['start']   = "";
+$settings['list']['folders__start']   = "";
 //  Folder location where to start showing folders and files from in the list
 
-$settings['list']['folders']['filter']  = "^\.+";
+$settings['list']['folders__filter']  = "^\.+";
 //  Regular expression of filter string for folders NOT to be listed
 
-$settings['list']['folders']['accept']  = ".*";
+$settings['list']['folders__accept']  = ".*";
 // Regular expression of filter string for folders to ACCEPT ONLY
 
-$settings['list']['folders']['only']    = false;
+$settings['list']['folders__only']    = false;
 // Boolean value (true|false); Set true to display folders only
 
 //---------------
@@ -95,23 +95,23 @@ $settings['list']['folders']['only']    = false;
 //---------------
 // Regular expression of filter strings…
 
-$settings['list']['files']['filter']    = "^\.+";
+$settings['list']['files__filter']    = "^\.+";
 // …for files NOT to be listed
 
-$settings['list']['files']['accept']    = ".*";
+$settings['list']['files__accept']    = ".*";
 // …for files to be listed ONLY e.g. "\.(jpg|png|gif)$";
 
 
-$settings['list']['files']['skip_0b']   = false;
+$settings['list']['files__skip_0b']   = false;
 // Set true to skip files if its size is 0 byte
 
-$settings['list']['files']['maxsize']   = false;
+$settings['list']['files__maxsize']   = false;
 // Maximum size of files to be listed 
 
-$settings['list']['files']['minsize']   = false;
+$settings['list']['files__minsize']   = false;
 // Minimum size of files to be listed
 
-$settings['list']['files']['only']      = false;
+$settings['list']['files__only']      = false;
 // If this is set true, only folders that contain files are shown in the tree
 // and (if "folders only" option is not set) only files are set as result
 
