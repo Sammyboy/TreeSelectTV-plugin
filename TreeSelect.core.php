@@ -5,7 +5,7 @@
 //  Core part of the
 //  TreeSelectTV for MODx Evolution
 //
-//  @version    0.1.4
+//  @version    0.1.5
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //
@@ -45,6 +45,7 @@ $settings['list']['folders__start']     = $list_folders_start;
 $settings['list']['folders__filter']    = $list_folders_filter;
 $settings['list']['folders__accept']    = $list_folders_accept;
 $settings['list']['folders__only']      = $list_folders_only == "yes" ? true : false;
+$settings['list']['folders__show_size'] = $list_folders_showSize == "yes" ? true : false;
 
 $settings['list']['files__filter']      = $list_files_filter;
 $settings['list']['files__accept']      = $list_files_accept;
@@ -53,14 +54,14 @@ $settings['list']['files__skip_0b']     = $list_files_skip_0b == "yes" ? true : 
 $settings['list']['files__maxsize']     = $list_files_maxsize == -1 ? false : $list_files_maxsize;
 $settings['list']['files__minsize']     = $list_files_minsize == -1 ? false : $list_files_minsize;
 $settings['list']['files__only']        = $list_files_only == "yes" ? true : false;
+$settings['list']['files__show_size']   = $list_files_showSize == "yes" ? true : false;
 
 $default_settings = $settings;
-//unset($settings);
 
 // load custom configuration files
 $configFiles = glob($pluginPath.'configs/*.config.inc.php');
-//$i = 0;
-$ids_found = '';
+
+//$ids_found = '';
 if (count($configFiles)) {
     foreach ($configFiles as $i => $configFile) {
         $settings = $default_settings;
@@ -68,14 +69,13 @@ if (count($configFiles)) {
         if (!isset($settings['input']['tvids']) || !strlen($settings['input']['tvids'])) continue;
         $options[$i]['values'] = $settings;
         $options[$i]['file'] = $configFile;
-        $ids_found .= (strlen($ids_found) ? "," : "").$settings['input']['tvids'];
-//        ++$i;
+//        $ids_found .= (strlen($ids_found) ? "," : "").$settings['input']['tvids'];
         unset($settings);
     }
 } elseif (!isset($default_settings['input']['tvids']) || !strlen($default_settings['input']['tvids'])) return;
 else {
-    $options[$i]['values'] = $default_settings;
-    $options[$i]['file'] = $default_config;
+    $options[0]['values'] = $default_settings;
+    $options[0]['file'] = $default_config;
 }
 
 // Initialize things
@@ -89,6 +89,7 @@ foreach ($options as $i => $option) {
     $input_opt = $option['values']['input'];
     $list_opt = $option['values']['list'];
     $sep = $list_opt['separator'];
+    if ($list_opt['depth'] !== false) $list_opt['depth'] = $list_opt['depth'] + 1;
     
     // Check if the current template matches and user has the right role
     $tpl    = (strlen($input_opt['tplids'])) ? explode(',', $input_opt['tplids']) : false;

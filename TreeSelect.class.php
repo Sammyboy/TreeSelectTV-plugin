@@ -5,7 +5,7 @@
 //  Class for the
 //  TreeSelectTV for MODx Evolution
 //
-//  @version    0.1.4
+//  @version    0.1.5
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //
@@ -36,22 +36,15 @@ class TreeSelect {
         if (!isset($list)) $list = $this->treeList;
         $folder         = (strlen($folder) ? trim($folder, "/") : trim($this->config['folders__start'], "/"))."/";
         $depth          = ($depth === null) ? $this->config['depth'] : $depth;
-        $folders_only   = $this->config['folders__only'];
+        $folders_only   = isset($this->config['folders__only']) ? $this->config['folders__only'] : false;
         $files_only     = isset($this->config['files__only']) ? $this->config['files__only'] : false;
         if ($handle = opendir($this->config['folders__base'].$folder)) {
             while ($file = readdir($handle)) {
                 $path = $this->config['folders__base'].$folder.$file;
                 $is_dir = is_dir($path);
-                $is_file = is_file($path);
                 $has_size = true;
-                // Check filesize
-                if ($is_file) {
-                    $size = filesize($path);
-                    if ( ($this->config['files__skip_0b'] && ($size == 0)) ||
-                         ($this->config['files__minsize'] && ($size < $this->config['files__minsize'])) ||
-                         ($this->config['files__maxsize'] && ($size > $this->config['files__maxsize'])) )
-                        $has_size = false;
-                }
+                $has_content = true;
+                
                 // Set filters for files and folders
                 $filter = $is_dir ? ((isset($this->config['folders__filter']) && $this->config['folders__filter'])  ?
                                         $this->config['folders__filter'] : "") : 
@@ -61,39 +54,40 @@ class TreeSelect {
                                         $this->config['folders__accept'] : "") : 
                                     ((isset($this->config['files__accept'])   && $this->config['files__accept'])    ?
                                         $this->config['files__accept'] : "");
-                // … and use them
-                if ( $has_size &&
-                     (($folders_only === false) || ($folders_only && $is_dir)) &&
-                     !in_array($file, array(".","..")) && 
-                     (!strlen($filter) || !preg_match("/".$filter."/", $file)) &&
-                     (!strlen($accept) || preg_match("/".$accept."/", $file)) ) {
 
+                // … and use them
+                if ( !in_array($file, array(".","..")) ) {
+                    $size = filesize($path);
                     $key = count($list);
 
                     $list[$key]['name'] = $file;
                     $list[$key]['size'] = $size;
-                    
+                    $delete_content = $files_only;
 
                     if ($is_dir) {
                         $list[$key]['type'] = 'folder';
                         $list[$key]['size'] = 0;
+
                         // Get subfolders
-                        if (($depth === false) || ($depth > 0)) {
-                            $list[$key]['subfolder'] = $this->getDirList($list[$key]['subfolder'], $folder.$file, ($depth) ? $depth-1 : $depth);
-                            $delete_sub = $files_only;
-                            if (is_array($list[$key]['subfolder']) && count($list[$key]['subfolder'])) {
-                                foreach ($list[$key]['subfolder'] as $sub) {
-                                    if ($sub['type'] == 'file') {
-                                        if ($files_only) $delete_sub = false;
-                                        $list[$key]['size'] = $list[$key]['size'] + $sub['size'];
-                                    }
-                                }
+                        $list[$key]['folder_content'] = $this->getDirList($list[$key]['folder_content'], $folder.$file, $depth ? $depth-1 : $depth);
+
+                        $has_content = $this->hasContent($list[$key]['folder_content']);
+
+                        if ( is_array($list[$key]['folder_content']) &&
+                             count($list[$key]['folder_content'])
+                           ) {
+                            
+                            $delete_content = false;
+                            foreach ($list[$key]['folder_content'] as $sub) {
+                                $list[$key]['size'] = $list[$key]['size'] + $sub['size'];
                             }
-                            if ($delete_sub) unset($list[$key]['subfolder']);
-                        }
+                        } else $delete_content = true;
                         
-                    }  else {
+                        if ($depth === 0) $delete_content = true;
+                        
+                    } else {
                         $list[$key]['type'] = 'file';
+                        $delete_content = false;
                         // Check if file is an image
                         $is_image = getimagesize($path);
                         if ($is_image !== false) {
@@ -101,13 +95,29 @@ class TreeSelect {
                             $list[$key]['img']['src'] = '../'.$folder.$file;
                             list($list[$key]['img']['width'], $list[$key]['img']['height']) = $is_image;
                         }
+                        // Check filesize
+                        if ( ($this->config['files__skip_0b'] && ($size == 0)) ||
+                             ($this->config['files__minsize'] && ($size < $this->config['files__minsize'])) ||
+                             ($this->config['files__maxsize'] && ($size > $this->config['files__maxsize']))
+                           )
+                            $has_size = false;
                     }
-                    $list[$key]['formated_size'] = $this->format_bytes($size, $this->config['size_decimals']);
+                    $list[$key]['formated_size'] = $this->format_bytes($list[$key]['size'], $this->config['size_decimals']);
+
+                    if ($delete_content) unset($list[$key]['folder_content']);
+
+                    // use filters
+                    if ( ($folders_only && !$is_dir) ||
+                         (strlen($filter) && preg_match("/".$filter."/", $file)) ||
+                         (strlen($accept) && !preg_match("/".$accept."/", $file)) ||
+                         ($depth === 0) ||
+                         !$has_size ||
+                         ($is_dir && $files_only && $folders_only && !$has_content)
+                       )
+                        unset($list[$key]['name']);
                 }
             }
             closedir($handle);
-            // remove empty folders
-            //if ($files_only) $list = $this->removeEmptyFolders($list);
             // sort the list
             $list = $this->sortList($list);
         } else return "Folder {$folder} not found";
@@ -162,19 +172,22 @@ class TreeSelect {
             if ($sorted) return $list;
         } // end outer loop
     }
-
-    function removeEmptyFolders(&$list = null) {
-    // --> Removes folders with no subfolders
-        if (!isset($list)) $list = $this->treeList;
-        $list_count = count($list);
-        foreach ($list as $key => $li) {
-            if ($li['type'] == "folder") {
-                if (!isset($li['subfolder']) || !count($li['subfolder'])) unset($list[$key]);
+   
+    function hasContent($list, $type = "all") {
+        if (!isset($list) || !is_array($list) || !count($list)) return false;
+        $output = false;
+        foreach ($list as $li) {
+            if ( isset($li['size']) && 
+                 ( ($type == 'all') ||
+                   (($type == 'folders') && ($li['type'] == 'folder')) ||
+                   (($type == 'files') && ($li['type'] == 'file'))
+                 )
+               ) {
+                $output = true;
+                break;
             }
         }
-        sort($list);
-        reset($list);
-        return $list;
+        return $output;
     }
 
     function list2HTML(&$list = null, $path = "", $level = 1, $counter = 0) {
@@ -182,15 +195,16 @@ class TreeSelect {
         if (!isset($list)) $list = $this->treeList;
         // set configuration parameters
         $separator      = isset($this->config['separator'])         ? $this->config['separator'] : "/";
-        $outerTpl      = isset($this->config['outerTpl'])         ? $this->config['outerTpl'] :
+        $outerTpl       = isset($this->config['outerTpl'])         ? $this->config['outerTpl'] :
                             '<ul class="item_group level_[+tsp.level+]">[+tsp.wrapper+]</ul>';
-        $innerTpl      = isset($this->config['innerTpl'])         ? $this->config['innerTpl'] :
+        $innerTpl       = isset($this->config['innerTpl'])         ? $this->config['innerTpl'] :
                             '<li class="item_line [+tsp.lastItem+]" path="[+tsp.path+]">'.
                             '<span class="item_text">[+tsp.name+]</span>[+tsp.wrapper+]</li>';
         $output = "";
         $last = true;
 
         foreach ($list as $li) {
+            if (!isset($li['name'])) continue;
             $new_path = $path.$li['name'].($li['type'] == "folder" ? $separator : "");
             $filetype = "";
             if ($li['type'] == 'file') {
@@ -203,14 +217,14 @@ class TreeSelect {
             $ph['[+tsp.img_src+]']  = isset($li['img']['src']) ? $li['img']['src'] : "";
             $ph['[+tsp.img_w+]']    = isset($li['img']['width']) ? $li['img']['width'] : "";
             $ph['[+tsp.img_h+]']    = isset($li['img']['height']) ? $li['img']['height'] : "";
-            $ph['[+tsp.size+]']     = $li['formated_size'];
-//            $ph['[+tsp.size+]']     = $li['type'] == 'file' ? $li['formated_size'] : null;
+            $ph['[+tsp.size+]']     = (($li['type'] == 'file') && $this->config['files__show_size']) ||
+                                      (($li['type'] == 'folder') && $this->config['folders__show_size']) ? $li['formated_size'] : null;
             $ph['[+tsp.path+]']     = $new_path;
             $ph['[+tsp.level+]']    = $level;
             $ph['[+tsp.type+]']     = $li['type'];
             $ph['[+tsp.filetype+]'] = $filetype;
-            $ph['[+tsp.lastItem+]'] = !isset($li['subfolder']) ? "last_item" : "";
-            $ph['[+tsp.wrapper+]']  = isset($li['subfolder']) ? $this->list2HTML($li['subfolder'], $new_path, $level + 1, $counter) : "";
+            $ph['[+tsp.lastItem+]'] = (($li['type'] == 'folder') && !$this->hasContent($li['folder_content'], $this->config['folders__only'] ? 'folders' : 'all')) ? "last_item" : "";
+            $ph['[+tsp.wrapper+]']  = $this->hasContent($li['folder_content']) ? $this->list2HTML($li['folder_content'], $new_path, $level + 1, $counter) : "";
             // … and parse them
             $output .= str_replace(array_keys($ph), array_values($ph), $innerTpl);
         }

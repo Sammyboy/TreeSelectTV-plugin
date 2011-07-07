@@ -87,13 +87,11 @@
     border: 1px solid #bbb;
 }
 
-
-
-.treeBox .file .filename {
+.treeBox .file .filename, .treeBox .folder .filename {
     display: inline-block;
     min-width: 280px;
 }
-.treeBox .file .filesize {
+.treeBox .file .filesize, .treeBox .folder .filesize {
     display: inline-block;
     text-align: right;
     min-width: 70px;
@@ -126,8 +124,9 @@
 .treeBox .folder .folder_status.open {
     background: transparent url(../../../manager/media/style/MODxCarbon/images/tree/minusnode.gif) no-repeat;
 }
-.treeBox .last_item .folder_status, .treeBox .last_item .folder_status.open {
+.treeBox .last_item .folder_status, .treeBox .last_item .folder_status.open, .treeBox .file .folder_status, .treeBox .file .folder_status.open {
     background: transparent;
+    cursor: default;
 }
 
 /* filetype icons */

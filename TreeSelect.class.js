@@ -1,4 +1,4 @@
-// Part of the TreeSelectTV plugin version 0.1.4 for the MODx Evolution CMF
+// Part of the TreeSelectTV plugin version 0.1.5 for the MODx Evolution CMF
 
 var TreeSelect = new Class({
     initialize: function(inputID,tree,inputStatus,filesOnly,imageView,hideOnSelect,basePath,saveConfig) {
@@ -211,10 +211,12 @@ var TreeSelect = new Class({
         if (!this.line.hasClass('last_item')) {
             if (!this.line.hasClass('close')) this.line.toggleClass('open');
             var child_group = this.line.getElements('.item_group');
-            if (this.line.hasClass('open') && child_group[0].hasClass('hide')) {
-                child_group[0].removeClass('hide');
-            } else if (!this.line.hasClass('open') && !child_group[0].hasClass('hide')) {
-                child_group[0].addClass('hide');
+            if ((child_group instanceof Array) && child_group.length) {
+                if (this.line.hasClass('open') && child_group[0].hasClass('hide')) {
+                    child_group[0].removeClass('hide');
+                } else if (!this.line.hasClass('open') && !child_group[0].hasClass('hide')) {
+                    child_group[0].addClass('hide');
+                }
             }
         }
     },

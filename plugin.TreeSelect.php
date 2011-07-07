@@ -29,9 +29,11 @@
 &list_folders_start=Start folder;string;
 &list_folders_filter=Folders to ignore (reg. expr.);string;^\.+
 &list_folders_accept=Folders to accept (reg. expr.);string;.*
+&list_folders_showSize=Show folder sizes;list;yes,no;yes
 &list_folders_only=Folders only;list;yes,no;no
 &list_files_filter=Files to ignore;string;^\.+
 &list_files_accept=Files to accept;string;.*
+&list_files_showSize=Show file sizes;list;yes,no;yes
 &list_files_skip_0b=Skip empty files;list;yes,no;no
 &list_files_maxsize=Max. filesize;int;-1
 &list_files_minsize=Min. filesize;int;-1

@@ -55,7 +55,7 @@ $settings['list']['sortDir']            = "asc";
 
 $settings['list']['sortFirst']          = "folders";
 //  Sorting direction
-//  Options:    "folders", "files", false
+//  Options:    "folders", "files", "nothing"
 
 $settings['list']['size_decimals']      = 2;
 //  Number of decimals to display filesizes
@@ -90,6 +90,9 @@ $settings['list']['folders__accept']  = ".*";
 $settings['list']['folders__only']    = false;
 // Boolean value (true|false); Set true to display folders only
 
+$settings['list']['folders__show_size'] = true;
+// Boolean value (true|false); Set true to display folders sizes
+
 //---------------
 // Files
 //---------------
@@ -101,6 +104,8 @@ $settings['list']['files__filter']    = "^\.+";
 $settings['list']['files__accept']    = ".*";
 // …for files to be listed ONLY e.g. "\.(jpg|png|gif)$";
 
+$settings['list']['files__show_size'] = true;
+// Boolean value (true|false); Set true to display file sizes
 
 $settings['list']['files__skip_0b']   = false;
 // Set true to skip files if its size is 0 byte
