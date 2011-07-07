@@ -6,7 +6,7 @@
 //
 //
 //  @category   plugin
-//  @version    0.1.3
+//  @version    0.1.5
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //
