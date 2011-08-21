@@ -29,7 +29,7 @@
     background: #d5ffb7;
 }
 
-.hover {
+.hover, select, select:active, input[type=button] {
     cursor: pointer;
     cursor: hand;
 }
@@ -158,9 +158,14 @@
 
 /* save-box */
 .treeBox_saveBox {
-    border: 1px solid #a55;
+    border: 1px solid #aaa;
     background: #fee;
+    display: inline-block;
     //display: none;
+}
+
+.treeBox_saveBox.open {
+    display: block;
 }
 
 .treeBox_saveBox .treeBox_saveBoxContent {
@@ -168,17 +173,18 @@
     text-align: center;
 }
 
-.treeBox_saveBox span {
+.treeBox_saveBox span.button {
     font-size: 10px;
     display: block;
-    color: #900;
+    color: #888;
     background: #fff0f0;
     height: auto;
     font-weight: bold;
     text-align: center;
+    padding: 0 4px;
 }
 
-div.treeBox_saveBox, .treeBox_saveBox span {
+.treeBox_saveBox, .treeBox_saveBox span {
     border-radius: 4px;
     -moz-border-radius: 4px;
     -webkit-border-radius: 4px;
@@ -201,7 +207,39 @@ div.treeBox_saveBox, .treeBox_saveBox span {
 }
 
 .treeBox_saveBox span.filename {
-    color: #000;
+    color: #900;
     background-color: #fff;
     border: 1px solid #a44;
+    display: block;
 }
+
+.treeBox_saveBox span.filename.hover, .treeBox_saveBox select.hover {
+    background-color: #fcc;
+}
+
+.TreeSelectConfig {
+    width: 500px;
+    height: 330px;
+    white-space: nowrap;
+    overflow: auto;
+}
+
+.TreeSelectConfig li {
+    min-height: 30px;
+}
+
+.TreeSelectConfig span.text {
+    display: inline-block;
+    min-width: 200px;
+    padding-right: 5px;
+}
+
+.TreeSelectConfig input.int {
+    width: 30px;
+}
+.TreeSelectConfig input.string {
+    width: 180px;
+}
+
+
+

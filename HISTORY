@@ -1,3 +1,10 @@
+0.2.0 - added feature:
+            ability to counfigure the TVs in a configuration form in the
+            MODx manager backend
+            → no need to edit configuration files
+            
+            The configuration files from the versions 0.1.* can no longer be used
+
 0.1.5 - added feature:
             ability to display sizes of folders
             

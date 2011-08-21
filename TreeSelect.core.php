@@ -3,19 +3,22 @@
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 //
 //  Core part of the
-//  TreeSelectTV for MODx Evolution
+//  TreeSelectTV
+//  for MODx Evolution CMF
 //
-//  @version    0.1.5
+//  @version    0.2.0
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
+//  @www        https://github.com/Sammyboy/TreeSelectTV-plugin
 //
 //:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
 global $content,$default_template,$tmplvars;
 
 // Include other parts of the package:
-// Class
+// Classes
 include $pluginPath."TreeSelect.class.php";
+include $pluginPath."PluginConfig.class.php";
 
 // Config files
 $settings = $options = array();
@@ -25,107 +28,76 @@ $default_config = $pluginPath."configs/default.config.inc.php";
 include $default_config;
 
 // … and from the backend plugin configuration
-$settings['input']['tvids']     = $tvids; 
-$settings['input']['tplids']    = $tplids;
-$settings['input']['roles']     = $roles;
-$settings['input']['status']    = $input_status == "hide" ? "" : $input_status;
-
-$settings['list']['separator']          = $list_separator;
-$settings['list']['depth']              = $list_depth == -1 ? false : $list_depth;
-$settings['list']['hideOnSelect']       = $list_hideOnSelect == "yes" ? true : false;
-$settings['list']['sortBy']             = $list_sortBy == "unsorted" ? false : $list_sortBy;
-$settings['list']['sortDir']            = $list_sortDirection == "lower -> upper" ? "asc" : "desc";
-$settings['list']['sortFirst']          = $list_sortFirst == "not set" ? false : strtolower($list_sortFirst);
-$settings['list']['image_view']         = $list_image_view == "yes" ? true : false;
-$settings['list']['size_decimals']      = $list_sizeDecimals > 0 ? $list_sizeDecimals : 0;
-$settings['list']['path_base']          = strtolower($list_path_base);
-
-$settings['list']['folders__base']      = $list_folders_base;
-$settings['list']['folders__start']     = $list_folders_start;
-$settings['list']['folders__filter']    = $list_folders_filter;
-$settings['list']['folders__accept']    = $list_folders_accept;
-$settings['list']['folders__only']      = $list_folders_only == "yes" ? true : false;
-$settings['list']['folders__show_size'] = $list_folders_showSize == "yes" ? true : false;
-
-$settings['list']['files__filter']      = $list_files_filter;
-$settings['list']['files__accept']      = $list_files_accept;
-
-$settings['list']['files__skip_0b']     = $list_files_skip_0b == "yes" ? true : false;
-$settings['list']['files__maxsize']     = $list_files_maxsize == -1 ? false : $list_files_maxsize;
-$settings['list']['files__minsize']     = $list_files_minsize == -1 ? false : $list_files_minsize;
-$settings['list']['files__only']        = $list_files_only == "yes" ? true : false;
-$settings['list']['files__show_size']   = $list_files_showSize == "yes" ? true : false;
-
-$default_settings = $settings;
+$plugin = new PluginConfig('TreeSelectTV');
+$plugin->deleteOption('pluginPath');
+$default_settings = array_merge($settings, $plugin->config['values']);
 
 // load custom configuration files
 $configFiles = glob($pluginPath.'configs/*.config.inc.php');
 
-//$ids_found = '';
 if (count($configFiles)) {
     foreach ($configFiles as $i => $configFile) {
         $settings = $default_settings;
         if ($configFile != $default_config) include $configFile;
-        if (!isset($settings['input']['tvids']) || !strlen($settings['input']['tvids'])) continue;
+        if ( !isset($settings['input_tvids']) ||
+             (is_string($settings['input_tvids']) && 
+             !strlen($settings['input_tvids']))
+           ) continue;
+        $options[$i] = $plugin->config;
         $options[$i]['values'] = $settings;
         $options[$i]['file'] = $configFile;
-//        $ids_found .= (strlen($ids_found) ? "," : "").$settings['input']['tvids'];
         unset($settings);
     }
-} elseif (!isset($default_settings['input']['tvids']) || !strlen($default_settings['input']['tvids'])) return;
+} elseif (!isset($default_settings['input_tvids']) || (is_string($default_settings['input_tvids']) && !strlen($default_settings['input_tvids']))) return;
 else {
+    $options[0] = $plugin->config;
     $options[0]['values'] = $default_settings;
     $options[0]['file'] = $default_config;
 }
 
 // Initialize things
-$tvIds = $htmlTrees = $inputStatus = $files_only = $image_view = $hideOnSelect = $basePaths = $saveConfigs = "";
+$tvIds = $htmlTrees = $inputStatus = $basePaths = $saveConfigs = $json_opts = "";
 
 $cur_tpl    = isset($_POST['template']) ? $_POST['template'] : (isset($content['template']) ? $content['template'] : $default_template);
 $cur_role   = $_SESSION['mgrRole'];
 
 // Set options for each TV
 foreach ($options as $i => $option) {
-    $input_opt = $option['values']['input'];
-    $list_opt = $option['values']['list'];
-    $sep = $list_opt['separator'];
-    if ($list_opt['depth'] !== false) $list_opt['depth'] = $list_opt['depth'] + 1;
+    $option['values']['list_path_base'] = strtolower($option['values']['list_path_base']);
+    $opt = $option['values'];
+    $sep = $opt['list_separator'];
+    if (($opt['list_depth'] !== false) && ($opt['list_depth'] > -1)) $opt['list_depth'] += 1;
     
     // Check if the current template matches and user has the right role
-    $tpl    = (strlen($input_opt['tplids'])) ? explode(',', $input_opt['tplids']) : false;
-    $role   = (strlen($input_opt['roles'])) ? explode(',', $input_opt['roles']) : false;
+    $tpl    = (strlen($opt['input_tplids'])) ? explode(',', $opt['input_tplids']) : false;
+    $role   = (strlen($opt['input_roles'])) ? explode(',', $opt['input_roles']) : false;
     if (($tpl && !in_array($cur_tpl, $tpl)) || ($role && !in_array($cur_role, $role))) continue;
     
-    if ($list_opt['folders__base'] == "") $list_opt['folders__base'] = MODX_BASE_PATH;
+    if ($opt['list_folders__base'] == "") $opt['list_folders__base'] = MODX_BASE_PATH;
     $tvName = (isset($option['file']) && $option['file']) ? basename($option['file']) : "default";
     $tvName = strlen($tvName) ? substr($tvName, 0, strpos($tvName, '.')) : "";
 
-    $tvIds          .=  (strlen($tvIds) ? "," : "")."[".trim($input_opt['tvids'])."]";
+    $tvIds          .=  (strlen($tvIds) ? "," : "")."[".trim($opt['input_tvids'])."]";
     $inputStatus    .=  (strlen($inputStatus) ? "," : "").
-                        (strlen($input_opt['status']) && in_array($input_opt['status'], array("show","toggle")) ?
-                        "'".trim($input_opt['status'])."'" :"''");
-    $files_only     .=  (strlen($files_only) ? "," : "").
-                        ($list_opt['files__only'] && !$list_opt['folders__only'] ? "true" : "false");
-    $image_view     .=  (strlen($image_view) ? "," : "").
-                        (isset($list_opt['image_view']) && $list_opt['image_view'] ? "true" : "false");
-    $hideOnSelect   .=  (strlen($hideOnSelect) ? "," : "").
-                        (isset($list_opt['hideOnSelect']) && $list_opt['hideOnSelect'] ? "true" : "false");
+                        (strlen($opt['input_status']) && in_array($opt['input_status'], array("show","toggle")) ?
+                        "'".trim($opt['input_status'])."'" :"''");
     $basePaths      .=  (strlen($basePaths) ? "," : "")."'".
-                        (isset($list_opt['path_base']) && ($list_opt['path_base'] != "start folder") ?
-                            ($list_opt['path_base'] == "server root" ?
-                                $sep.trim(trim($list_opt['folders__base'],$sep).$sep.trim($list_opt['folders__start'],$sep)).$sep :
-                                trim($list_opt['folders__start'],"/")."/") : 
+                        ((isset($opt['list_path_base']) && ($opt['list_path_base'] != "start folder")) ?
+                            (($opt['list_path_base'] == "server root") ?
+                                $sep.trim(trim($opt['list_folders__base'],$sep).$sep.trim($opt['list_folders__start'],$sep)).$sep :
+                                trim($opt['list_folders__start'],"/")."/") : 
                             ""
                         )."'";
     $saveConfigs    .=  (strlen($saveConfigs) ? "," : "")."[".
                         ($cur_role == 1 ? ($tvName == "default" ? "'{$tvName}','save'" : "'{$tvName}','reset','delete'" ) : "''")."]";
-
-    //TODO Implement other methods for generating different HTML coded lists (e.g. image preview or Wayfinder menu)
+    unset($option['values']['list_outerTpl']);
+    unset($option['values']['list_innerTpl']);
+    $json_opts      .=  (strlen($json_opts) ? "," : "").json_encode($option);
 
     // Generate directory listing
-    $TreeSelect = new TreeSelect($list_opt);
+    $TreeSelect = new TreeSelect($opt);
 
-    if ( is_array($TreeSelect->treeList) && count($TreeSelect->treeList) ) {
+    if (is_array($TreeSelect->treeList) && count($TreeSelect->treeList)) {
         
         // ... and put it into HTML code
         $html_tree = $TreeSelect->list2HTML();
@@ -153,17 +125,14 @@ window.addEvent('domready', function() {
     var tvIds           = new Array({$tvIds});
     var trees           = new Array({$htmlTrees});
     var inputStatus     = new Array({$inputStatus});
-    var filesOnly       = new Array({$files_only});
-    var imageView       = new Array({$image_view});
-    var hideOnSelect    = new Array({$hideOnSelect});
     var basePath        = new Array({$basePaths});
     var saveConfigs     = new Array({$saveConfigs});
+    var configs         = new Array({$json_opts});
 
     for (var i=0; i<tvIds.length; i++) {
         for (var j=0; j<tvIds[i].length; ++j) {
-            var inputID = 'tv'+ tvIds[i][j];
-            if ($(inputID) != null) { 
-                new TreeSelect(inputID,trees[i],inputStatus[i],filesOnly[i],imageView[i],hideOnSelect[i],basePath[i],saveConfigs[i]);
+            if ($('tv'+tvIds[i][j]) != null) { 
+                new TreeSelect(tvIds[i][j],trees[i],inputStatus[i],basePath[i],saveConfigs[i],configs[i]);
             }
         }
     }   
@@ -177,42 +146,72 @@ OUTPUT;
     $e->output($output);
     
 }
+
+
 if ($e->name == 'OnBeforeDocFormSave') {
     $tvIds = explode(",", str_replace(array("[","]"), "", $tvIds));
+    $tvIds = array_unique($tvIds);
+    $config_ids = $plugin->config['values']['input_tvids'];
+    $config_ids = strlen($config_ids) ? explode(",", $config_ids) : array();
+    
     foreach ($tvIds as $tvId) {
-        list($path, $save_opt) = json_decode($tmplvars[$tvId][1]);
-        if (strlen($save_opt)) {
+        list($path, $save_opt, $settings)  = json_decode($tmplvars[$tvId][1]);
+        if (isset($save_opt) && strlen($save_opt)) {
             list($prefix, $opt) = explode(":", $save_opt);
             $file_path = $pluginPath."configs/".$prefix.".config.inc.php";
 
             if (file_exists($file_path)) unlink($file_path);
-            if (in_array($opt, array("save","reset"))) {
-                $settings = $default_settings;
+            if ($opt == "delete") {
+                // Add deleted IDs to the properties string
+                if (!in_array($tvId, $config_ids))
+                    $config_ids[count($config_ids)] = $tvId;
 
-                $settings['input']['tvids'] = (string) $tvId;
-                unset($settings['list']['outerTpl']);
-                unset($settings['list']['innerTpl']);
+            } else {
+                // Write configuration file
+                $output = <<< OUTPUT
+<?php defined('IN_MANAGER_MODE') or die('<h1>ERROR:</h1><p>Please use the MODx Content Manager instead of accessing this file directly.</p>');
 
-                $output =   "<?php defined('IN_MANAGER_MODE') or ".
-                            "die('<h1>ERROR:</h1><p>Please use the MODx Content Manager ".
-                            "instead of accessing this file directly.</p>');\n\n";
-                foreach ($settings['input'] as $key => $value) {
-                    $output .=  "\$settings['input']['{$key}'] = ".
-                                (is_int($value) ? $value : (is_bool($value) ? ($value ? "true" : "false") : "\"{$value}\"")).
-                                ";\n";
-                }
-                $output .= "\n";
-                foreach ($settings['list'] as $key => $value) {
-                    $output .=  "\$settings['list']['{$key}'] = ".
-                                (is_int($value) ? $value : (is_bool($value) ? ($value ? "true" : "false") : "\"{$value}\"")).
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+//
+//  Configuration file for the
+//  TreeSelectTV for MODx Evolution
+//
+//  @version    {$plugin->pluginInfo['version']}
+//
+//::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+OUTPUT;
+                foreach ($settings as $key => $value) {
+                    $output .=  "\$settings['{$key}'] = ".
+                                (($plugin->config['type'][$key] == "int") ? $value : (is_bool($value) ? ($value ? "true" : "false") : "\"{$value}\"")).
                                 ";\n";
                 }
                 $output .= "\n?>";
                 if (file_put_contents($file_path, $output) === false) print_r("ERROR: Could not write \"{$path}\"");
+                else {
+                    // Delete IDs from properties string
+                    if (is_array($config_ids) && count($config_ids)) {
+                        for ($i = 0; $i<count($config_ids); $i++) {
+                            if ($config_ids[$i] == $tvId) unset($config_ids[$i]);
+                        }
+                    }
+                }
             }
         }
         $tmplvars[$tvId][1] = $path;
     }
 
+    if (isset($config_ids) && count($config_ids))
+        $config_ids = trim(implode(",", $config_ids), ",");
+    else $config_ids = "";
+
+    if ($config_ids != $plugin->config['values']['input_tvids']) {
+        $plugin->config['values']['input_tvids'] = $config_ids;
+        $config_str = "&pluginPath=Plugin path;string;".str_replace(MODX_BASE_PATH, "", $pluginPath)." ";
+        $config_str .= $plugin->setConfigString();
+        if (!$plugin->saveProperties($config_str))
+            print_r("ERROR: Could not save TreeSelectTV plugin properties to the database <br>");
+    }
 }
 ?>

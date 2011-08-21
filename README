@@ -1,5 +1,5 @@
 ================================================================================
-TreeSelectTV plugin 0.1.5
+TreeSelectTV plugin 0.2.0
 ================================================================================
 for the MODX Evolution content management framework
 
@@ -16,6 +16,10 @@ As you can see in the configuration file "configs/default.config.inc.php",
 there are many options for a custom configuration and file filtering.
 The visual styles can be set in the "TreeSelect.styles.css" and the templates 
 in the configuration file(s).
+
+
+Important for upgrades from version 0.1.*:
+    The configuration files are not compatible and have to be readjusted
 
 
 ================================================================================
@@ -46,8 +50,8 @@ Installation:
         use these values
 
             "Plugin name":  TreeSelect
-            "Description":  <strong>0.1.5</strong> TreeSelectTV plugin 
-            
+            "Description":  <strong>0.1.6</strong> TreeSelectTV plugin 
+
         Open the file
 
             plugin.TreeSelect.php
@@ -82,19 +86,48 @@ A.  For
 
     use the "Plugin configuration" in the manager backend to adjust the
     values.
-    
+
     The settings are documented in the "configs/default.config.inc.php".
 
-B.  For at least two TVs with different trees, follow these instructions to
-    create a custom configuration file:
+B.  For at least two TVs with different trees, there are (additionally to step A)
+    two possibilities to create custom configuration files:
 
-      · Make a copy of the file "default.config.inc.php" inside the
-        "configs/" folder.
-      · Rename it to "*.config.inc.php" (where * should be replaced by a
-        name of your choice, e.g. "tv23.config.inc.php").
-      · Edit the file and set the correct values in there.
-      · Make sure it is placed in the folder "configs/".
-    
+    1st possibility (the easier one):
+
+        MODx manager backend (for administrators only)
+
+        ·   With a click on the "CONFIG" button on the left side of the treelist
+            tv in then manager backend, the button expands and shows 3 three
+            input fields:
+                - Name of the tv configuration
+                - option list
+                - checkbox
+
+        ·   With a click on the name of the tv configuration a configuration
+            window pops up, where the changes can be made
+
+        ·   If the configuration file for the tv does not exist yet, the option
+            list offers only the "Save" option. If the configuration file 
+            already exists, it displays the options "Reset" and "Delete"
+
+        ·   If the checkbox is checked, the changes will be saved by saving the
+            resource.
+
+
+    2nd possibility:
+
+        Creating configuration files manually
+
+        ·   Make a copy of the file "default.config.inc.php" inside the
+            "configs/" folder.
+
+        ·   Rename it to "*.config.inc.php" (where * should be replaced by a
+            name of your choice, e.g. "tv23.config.inc.php").
+
+        ·   Edit the file and set the correct values in there.
+
+        ·   Make sure it is placed in the folder "configs/".
+
     Inside the new file you may delete the lines (and comments) you don't
     need, except of the first and the last line.
 
