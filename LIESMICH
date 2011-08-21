@@ -35,6 +35,7 @@ Installation:
         TreeSelect.core.php
         TreeSelect.class.js
         TreeSelect.styles.css
+        PluginConfig.class.php
         configs/default.config.inc.php
 
     (Alternativ kann eine anderer Verzeichnisname und im "pluginPath"-Feld der
@@ -49,7 +50,7 @@ Installation:
         folgende Werte eintagen:
 
             "Plugin-Name":  TreeSelect
-            "Beschreibung": <strong>0.1.6</strong> TreeSelectTV plugin 
+            "Beschreibung": <strong>0.2.0</strong> TreeSelectTV plugin 
 
         Die Datei
 
