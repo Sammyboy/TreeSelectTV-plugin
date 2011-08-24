@@ -1,3 +1,5 @@
+0.2.1 - bugfix: error message on blank template
+
 0.2.0 - added feature:
             ability to counfigure the TVs in a configuration form in the
             MODx manager backend

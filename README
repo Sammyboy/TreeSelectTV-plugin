@@ -1,5 +1,5 @@
 ================================================================================
-TreeSelectTV plugin 0.2.0
+TreeSelectTV plugin 0.2.1
 ================================================================================
 for the MODX Evolution content management framework
 
@@ -51,7 +51,7 @@ Installation:
         use these values
 
             "Plugin name":  TreeSelect
-            "Description":  <strong>0.2.0</strong> TreeSelectTV plugin 
+            "Description":  <strong>0.2.1</strong> TreeSelectTV plugin 
 
         Open the file
 

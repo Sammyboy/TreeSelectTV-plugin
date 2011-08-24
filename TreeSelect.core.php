@@ -6,7 +6,7 @@
 //  TreeSelectTV
 //  for MODx Evolution CMF
 //
-//  @version    0.2.0
+//  @version    0.2.1
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //  @www        https://github.com/Sammyboy/TreeSelectTV-plugin
@@ -60,6 +60,9 @@ $tvIds = $htmlTrees = $inputStatus = $basePaths = $saveConfigs = $json_opts = ""
 
 $cur_tpl    = isset($_POST['template']) ? $_POST['template'] : (isset($content['template']) ? $content['template'] : $default_template);
 $cur_role   = $_SESSION['mgrRole'];
+
+// exit on blank template
+if ($cur_tpl == 0) return;
 
 // Set options for each TV
 foreach ($options as $i => $option) {

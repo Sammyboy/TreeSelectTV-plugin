@@ -1,4 +1,4 @@
-// Part of the TreeSelectTV plugin version 0.2.0 for the MODx Evolution CMF
+// Part of the TreeSelectTV plugin version 0.2.1 for the MODx Evolution CMF
 
 var TreeSelect = new Class({
     initialize: function(inputID,tree,inputStatus,basePath,saveConfig,config) {

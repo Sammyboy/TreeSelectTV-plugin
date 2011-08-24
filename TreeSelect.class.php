@@ -6,7 +6,7 @@
 //  TreeSelectTV
 //  for MODx Evolution CMF
 //
-//  @version    0.2.0
+//  @version    0.2.1
 //  @license    http://www.gnu.org/copyleft/gpl.html GNU Public License (GPL)
 //  @author     sam (sam@gmx-topmail.de)
 //  @www        https://github.com/Sammyboy/TreeSelectTV-plugin
